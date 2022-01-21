@@ -18,5 +18,5 @@ public enum AvatarStatus
 {
     Left,
     Right,
-    Hit,
+    Idle,
 }

@@ -6,26 +6,35 @@ using UnityEngine;
 
 public class PlayerHandler : MonoBehaviour
 {
-    public bool isBusy = false;
+    public AvatarStatus currentStatus;
 
-    public AvatarType currentType;
-    
-    private BlockItem _currentBlock;
+    private AvatarType _currentType;
+    private BlockItem _blockType;
+
+    public float horizontalSpeed = 40000.0f;
 
     #region Unity core event
 
     // Start is called before the first frame update
     void Start()
     {
-        currentType = AvatarType.Black;
+        _currentType = AvatarType.Black;
+        currentStatus = AvatarStatus.Idle;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (this.GetComponent<Rigidbody2D>().velocity.x == 0)
+        switch (currentStatus)
         {
-            isBusy = false;
+            case AvatarStatus.Left:
+                this.GetComponent<Rigidbody2D>().AddForce(new Vector2(horizontalSpeed * -1, 0));
+                break;
+            case AvatarStatus.Right:
+                this.GetComponent<Rigidbody2D>().AddForce(new Vector2(horizontalSpeed * 1, 0));
+                break;
+            case AvatarStatus.Idle:
+                break;
         }
     }
 
@@ -34,18 +43,39 @@ public class PlayerHandler : MonoBehaviour
         GUIStyle style = new GUIStyle();
         style.fontSize = 30;
         style.normal.textColor = Color.white;
-        int x = 0;
+
+
+        GUIStyle _blockStyle = new GUIStyle();
+        ;
+        _blockStyle.fontSize = 30;
+        _blockStyle.normal.textColor = Color.white;
+
+
+        GUIStyle _avatarStyle = new GUIStyle();
+        ;
+        _avatarStyle.fontSize = 30;
+        _avatarStyle.normal.textColor = Color.white;
+
+        int x = 50;
         if (gameObject.name == "P2")
         {
-            x = 150;
+            x += 150;
         }
 
-        if (_currentBlock.currentType == BlockType.BLACK)
+        if (_blockType.currentType == BlockType.BLACK)
         {
-            style.normal.textColor = Color.black;
+            _blockStyle.normal.textColor = Color.black;
         }
 
-        GUI.Label(new Rect(x, 0, 150, 50), _currentBlock.currentType.ToString(), style);
+        if (_currentType == AvatarType.Black)
+        {
+            _avatarStyle.normal.textColor = Color.black;
+        }
+
+
+        GUI.Label(new Rect(x, 0, 150, 50), _blockType.currentType.ToString(), _blockStyle);
+        GUI.Label(new Rect(x, 50, 150, 50), _currentType.ToString(), _avatarStyle);
+        GUI.Label(new Rect(x, 100, 150, 50), currentStatus.ToString(), style);
     }
 
     #endregion
@@ -57,14 +87,52 @@ public class PlayerHandler : MonoBehaviour
         Wall wall = other.gameObject.GetComponent<Wall>();
         if (wall != null)
         {
-            isBusy = false;
+            this.currentStatus = AvatarStatus.Idle;
         }
     }
 
     public void OnTriggerEnter2D(Collider2D other)
     {
         BlockItem block = other.GetComponent<BlockItem>();
-        _currentBlock = block;
+        _blockType = block;
+    }
+
+    #endregion
+
+
+    #region Public Function
+
+    public void ChangeAvatarType()
+    {
+        switch (_currentType)
+        {
+            case AvatarType.Black:
+                _currentType = AvatarType.White;
+                break;
+            case AvatarType.White:
+                _currentType = AvatarType.Black;
+                break;
+        }
+    }
+
+    public int GetRank()
+    {
+        int result = 0;
+        //加速
+        if ((_blockType.currentType == BlockType.BLACK && _currentType == AvatarType.Black) ||
+            (_blockType.currentType == BlockType.WHITE && _currentType == AvatarType.White))
+        {
+            result = 1;
+        }
+
+        //減速
+        if ((_blockType.currentType == BlockType.BLACK && _currentType == AvatarType.White) ||
+            (_blockType.currentType == BlockType.WHITE && _currentType == AvatarType.Black))
+        {
+            result = -1;
+        }
+
+        return result;
     }
 
     #endregion
