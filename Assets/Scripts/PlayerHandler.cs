@@ -8,6 +8,8 @@ public class PlayerHandler : MonoBehaviour
 {
     public bool isBusy = false;
 
+    public AvatarType currentType;
+    
     private BlockItem _currentBlock;
 
     #region Unity core event
@@ -15,6 +17,7 @@ public class PlayerHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currentType = AvatarType.Black;
     }
 
     // Update is called once per frame

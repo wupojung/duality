@@ -7,3 +7,16 @@ public enum BlockType
     BLACK,
     WHITE,
 }
+
+public enum AvatarType
+{
+    Black,
+    White,
+}
+
+public enum AvatarStatus
+{
+    Left,
+    Right,
+    Hit,
+}
