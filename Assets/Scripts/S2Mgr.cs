@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class S2Mgr : MonoBehaviour
 {
@@ -160,7 +161,13 @@ public class S2Mgr : MonoBehaviour
             Invoke("Chg_right", .5F);
         }
 
-        
+        //«ö¤Uenter ¶i¤J S3
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
+        {
+            Debug.Log("press enter !! ");
+            SceneManager.LoadScene(2);
+        }
+
         //TextControlVisible();
 
     }
