@@ -9,14 +9,15 @@ public class BlockItem : MonoBehaviour
 {
     public BlockType currentType = BlockType.BLACK;
 
-  //  public 
-   // private Image _image;
+    //  public 
+    // private Image _image;
     public Sprite day;
     public Sprite night;
+
     void Start()
     {
         //Refresh();
-       // _image = GetComponent<Image>();
+        // _image = GetComponent<Image>();
     }
 
     private void Update()
@@ -26,6 +27,11 @@ public class BlockItem : MonoBehaviour
 
     //public function 
 
+    public Image GetImage()
+    {
+        return this.gameObject.GetComponent<Image>();
+    }
+
     public void Refresh()
     {
         Image _image = this.gameObject.GetComponent<Image>();
@@ -34,24 +40,26 @@ public class BlockItem : MonoBehaviour
         {
             case BlockType.BLACK:
                 _image.sprite = night;
-                _image.color = Color.white;
                 break;
             case BlockType.WHITE:
-                // image.material.color = Color.white;
                 _image.sprite = day;
-                _image.color = Color.white;
+
                 break;
         }
+
+        _image.color = Color.white;
     }
 
     public void RandomType()
     {
-        if (Random.Range(0, 2) == 1)   //隨機配色  
+        if (Random.Range(0, 2) == 1) //隨機配色  
         {
             ChangeType();
         }
+
         Refresh();
     }
+
     public void ChangeType()
     {
         switch (currentType)
@@ -63,6 +71,7 @@ public class BlockItem : MonoBehaviour
                 currentType = BlockType.BLACK;
                 break;
         }
+
         Refresh();
     }
 }

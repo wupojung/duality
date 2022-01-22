@@ -69,7 +69,6 @@ public class S3Mgr : MonoBehaviour
         {
             _distance -= 100;
         }
-
     }
 
     #endregion
@@ -145,10 +144,11 @@ public class S3Mgr : MonoBehaviour
                 GameObject temp = scrollPanel.transform.GetChild(i).gameObject;
                 _scrollPanelList.Add(temp);
 
-                foreach (var blockItem in temp.GetComponentsInChildren<BlockItem>())
-                {
-                    blockItem.Refresh();
-                }
+                RandomScrollPanel(temp);
+                // foreach (var blockItem in temp.GetComponentsInChildren<BlockItem>())
+                // {
+                //     blockItem.Refresh();
+                // }
             }
 
             // Debug.Log($"{_scrollPanelList.Count}");
@@ -241,9 +241,41 @@ public class S3Mgr : MonoBehaviour
         try
         {
             int count = panelRoot.transform.childCount;
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < count; i += 2)
             {
-                panelRoot.transform.GetChild(i).GetComponent<BlockItem>()?.RandomType();
+                BlockItem left = panelRoot.transform.GetChild(i).GetComponent<BlockItem>();
+                BlockItem right = panelRoot.transform.GetChild(i + 1).GetComponent<BlockItem>();
+
+                Debug.Log($"setup {left.name}  +  {right.name} ");
+
+                int randomIndex = Random.Range(0, MapResourceHelper.Data.Count);
+                //左邊
+                if (Random.Range(0, 2) == 1) //隨機配色  
+                {
+                    left.currentType = BlockType.WHITE;
+                    left.GetImage().sprite = MapResourceHelper.Data[randomIndex].Day.Left;
+                    Debug.Log("L->W  name=" + left.GetImage().sprite.name);
+                }
+                else
+                {
+                    left.currentType = BlockType.BLACK;
+                    left.GetImage().sprite = MapResourceHelper.Data[randomIndex].Night.Left;
+                    Debug.Log("L->B  name=" + left.GetImage().sprite.name);
+                }
+
+                //右邊
+                if (Random.Range(0, 2) == 1) //隨機配色  
+                {
+                    right.currentType = BlockType.WHITE;
+                    right.GetImage().sprite = MapResourceHelper.Data[randomIndex].Day.Right;
+                    Debug.Log("R->W  name=" + right.GetImage().sprite.name);
+                }
+                else
+                {
+                    right.currentType = BlockType.BLACK;
+                    right.GetImage().sprite = MapResourceHelper.Data[randomIndex].Night.Right;
+                    Debug.Log("R->B  name=" + right.GetImage().sprite.name);
+                }
             }
         }
         catch (Exception exp)
@@ -322,7 +354,12 @@ public class S3Mgr : MonoBehaviour
             //TODO: 計算 combo邏輯
             if (_player1.IsCombe)
             {
-                //加速
+                _distance -= 20;
+            }
+            
+            if (_player2.IsCombe)
+            {
+                _distance += 20;
             }
         }
         catch (Exception exp)
