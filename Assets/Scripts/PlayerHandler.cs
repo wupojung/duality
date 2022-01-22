@@ -182,11 +182,11 @@ public class PlayerHandler : MonoBehaviour
         {
             case AvatarType.Black:
                 _avatarType = AvatarType.White;
-                animator.runtimeAnimatorController = dayController;
+                // animator.runtimeAnimatorController = dayController;
                 break;
             case AvatarType.White:
                 _avatarType = AvatarType.Black;
-                animator.runtimeAnimatorController = nightController;
+                // animator.runtimeAnimatorController = nightController;
                 break;
         }
 
