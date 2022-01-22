@@ -11,11 +11,16 @@ public class PlayerHandler : MonoBehaviour
 
     private AvatarType _avatarType;
     private BlockItem _blockType;
+    private BlockItem _predictBlock;
 
     private float _horizontalSpeed = 40000.0f;
 
 
     private Rigidbody2D _rigidbody2D;
+
+    public CircleCollider2D circleCollider2D;
+    private int _rank = 0;
+
 
     #region Unity core event
 
@@ -106,12 +111,18 @@ public class PlayerHandler : MonoBehaviour
     {
         BlockItem block = other.GetComponent<BlockItem>();
         _blockType = block;
+        _rank = GetRank111();
     }
 
     #endregion
 
 
     #region Public Function
+
+    public void SetPredictBlock(BlockItem item)
+    {
+        _predictBlock = item;
+    }
 
     public void SetHorizontalSpeed(float speed)
     {
@@ -134,13 +145,34 @@ public class PlayerHandler : MonoBehaviour
                 _avatarType = AvatarType.Black;
                 break;
         }
+
+        //切換顏色時進行預判 （combo)
+        //_predictBlock
+        //目前跟 預知一樣 表示 combo
+        if (_predictBlock != null)
+        {
+            if ((_avatarType == AvatarType.Black && _predictBlock.currentType == BlockType.BLACK)
+                || (_avatarType == AvatarType.White && _predictBlock.currentType == BlockType.WHITE))
+            {
+                Debug.Log("Combo!!");
+            }
+        }
+
+        // _predictBlock.currentType == BlockType.BLACK
     }
 
+
+
+    public int GetRank()
+    {
+        return _rank;
+    }
+    
     /// <summary>
     /// 取得權重 (同色+1 ，異色-1）
     /// </summary>
     /// <returns></returns>
-    public int GetRank()
+    public int GetRank111()
     {
         int result = 0;
         try
@@ -165,6 +197,7 @@ public class PlayerHandler : MonoBehaviour
             Debug.LogError(exp.ToString());
             throw;
         }
+
         return result;
     }
 
