@@ -1,63 +1,43 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Timers;
-using UnityEditor.Animations;
-using UnityEditor.U2D.Path.GUIFramework;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerHandler : MonoBehaviour
 {
-    public AnimatorController dayController;
+    private float _horizontalSpeed = 40000.0f;
+    private int _rank = 0;
 
-    public AnimatorController nightController;
     private Animator _animator;
-
-
+    private Rigidbody2D _rigidbody2D;
     private AvatarStatus _avatarStatus;
 
     private AvatarType _avatarType;
-    private BlockItem _previousBlock;
+
+    //private BlockItem _previousBlock;
     private BlockItem _blockType;
     private BlockItem _predictBlock;
-
-    private float _horizontalSpeed = 40000.0f;
-
-
-    private Rigidbody2D _rigidbody2D;
-
-    private int _rank = 0;
-
     private bool _isCombe = false;
-
-    private Timer combeCountDownTimer;
+    private Timer _comboCountDownTimer;
+    private int _interval = 2000; // 2 second 
 
     #region Unity core event
 
-    // Start is called before the first frame update
+    
     void Start()
     {
         _avatarType = AvatarType.Black;
         _avatarStatus = AvatarStatus.Idle;
 
         _rigidbody2D = GetComponent<Rigidbody2D>();
-
         _animator = GetComponent<Animator>();
 
-        combeCountDownTimer = new System.Timers.Timer();
-        combeCountDownTimer.Interval = 2000;
-        combeCountDownTimer.Elapsed += new System.Timers.ElapsedEventHandler(_TimersTimer_Elapsed);
-        combeCountDownTimer.Start();
+        _comboCountDownTimer = new System.Timers.Timer {Interval = _interval};
+        _comboCountDownTimer.Elapsed += new System.Timers.ElapsedEventHandler(_TimersTimer_Elapsed);
+        _comboCountDownTimer.Start();
     }
 
-    void _TimersTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-    {
-        //在這裡做想做的事    
-        _isCombe = false;
-    }
 
-    // Update is called once per frame
+
     void Update()
     {
         switch (_avatarStatus)
@@ -80,18 +60,18 @@ public class PlayerHandler : MonoBehaviour
         style.normal.textColor = Color.white;
 
 
-        GUIStyle _blockStyle = new GUIStyle();
-        _blockStyle.fontSize = 30;
-        _blockStyle.normal.textColor = Color.white;
+        GUIStyle blockStyle = new GUIStyle();
+        blockStyle.fontSize = 30;
+        blockStyle.normal.textColor = Color.white;
 
 
-        GUIStyle _avatarStyle = new GUIStyle();
-        _avatarStyle.fontSize = 30;
-        _avatarStyle.normal.textColor = Color.white;
+        GUIStyle avatarStyle = new GUIStyle();
+        avatarStyle.fontSize = 30;
+        avatarStyle.normal.textColor = Color.white;
 
-        GUIStyle _comboStyle = new GUIStyle();
-        _comboStyle.fontSize = 30;
-        _comboStyle.normal.textColor = Color.white;
+        GUIStyle comboStyle = new GUIStyle();
+        comboStyle.fontSize = 30;
+        comboStyle.normal.textColor = Color.white;
 
         int x = 50;
         if (gameObject.name == "P2")
@@ -101,23 +81,23 @@ public class PlayerHandler : MonoBehaviour
 
         if (_blockType.currentType == BlockType.BLACK)
         {
-            _blockStyle.normal.textColor = Color.black;
+            blockStyle.normal.textColor = Color.black;
         }
 
         if (_avatarType == AvatarType.Black)
         {
-            _avatarStyle.normal.textColor = Color.black;
+            avatarStyle.normal.textColor = Color.black;
         }
 
 
-        GUI.Label(new Rect(x, 0, 150, 50), _blockType.currentType.ToString(), _blockStyle);
-        GUI.Label(new Rect(x, 50, 150, 50), _avatarType.ToString(), _avatarStyle);
+        GUI.Label(new Rect(x, 0, 150, 50), _blockType.currentType.ToString(), blockStyle);
+        GUI.Label(new Rect(x, 50, 150, 50), _avatarType.ToString(), avatarStyle);
         GUI.Label(new Rect(x, 100, 150, 50), _avatarStatus.ToString(), style);
 
         if (_isCombe)
         {
-            _comboStyle.normal.textColor = Color.red;
-            GUI.Label(new Rect(x, 150, 150, 50), "combo！", _comboStyle);
+            comboStyle.normal.textColor = Color.red;
+            GUI.Label(new Rect(x, 150, 150, 50), "combo！", comboStyle);
         }
     }
 
@@ -141,24 +121,20 @@ public class PlayerHandler : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D other)
     {
-        _previousBlock = _blockType; //備份 前一個狀態
         BlockItem block = other.GetComponent<BlockItem>();
         if (block != null)
         {
             _blockType = block;
-            _rank = GetRank111();
+            _rank = GetRankByTwoBlockType();
         }
 
-        if (other.name=="DeathLine")
+        if (other.name == "DeathLine")
         {
-            
             GameMgr.IsGameOver = true;
-
         }
     }
 
     #endregion
-
 
     #region Public Function
 
@@ -204,8 +180,8 @@ public class PlayerHandler : MonoBehaviour
                 Debug.Log("Combo!!");
                 _isCombe = true;
                 //啟動計時器 關閉
-                combeCountDownTimer.Interval = 2000;
-                combeCountDownTimer.Start();
+                _comboCountDownTimer.Interval = _interval;
+                _comboCountDownTimer.Start();
             }
         }
 
@@ -219,10 +195,10 @@ public class PlayerHandler : MonoBehaviour
         {
             _animator.SetTrigger("Booster");
             _isCombe = false;
-        }    
+        }
     }
-    
-    
+
+
     public bool IsCombe
     {
         get => _isCombe;
@@ -238,7 +214,7 @@ public class PlayerHandler : MonoBehaviour
     /// 取得權重 (同色+1 ，異色-1）
     /// </summary>
     /// <returns></returns>
-    public int GetRank111()
+    public int GetRankByTwoBlockType()
     {
         int result = 0;
         try
@@ -266,6 +242,15 @@ public class PlayerHandler : MonoBehaviour
         }
 
         return result;
+    }
+
+    #endregion
+
+    #region Support Function
+
+    void _TimersTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+        _isCombe = false;
     }
 
     #endregion
