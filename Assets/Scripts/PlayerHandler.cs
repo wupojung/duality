@@ -3,35 +3,41 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.U2D.Path.GUIFramework;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerHandler : MonoBehaviour
 {
-    public AvatarStatus currentStatus;
+    private AvatarStatus _avatarStatus;
 
-    private AvatarType _currentType;
+    private AvatarType _avatarType;
     private BlockItem _blockType;
 
-    public float horizontalSpeed = 40000.0f;
+    private float _horizontalSpeed = 40000.0f;
+
+
+    private Rigidbody2D _rigidbody2D;
 
     #region Unity core event
 
     // Start is called before the first frame update
     void Start()
     {
-        _currentType = AvatarType.Black;
-        currentStatus = AvatarStatus.Idle;
+        _avatarType = AvatarType.Black;
+        _avatarStatus = AvatarStatus.Idle;
+
+        _rigidbody2D = GetComponent<Rigidbody2D>();
     }
 
     // Update is called once per frame
     void Update()
     {
-        switch (currentStatus)
+        switch (_avatarStatus)
         {
             case AvatarStatus.Left:
-                this.GetComponent<Rigidbody2D>().AddForce(new Vector2(horizontalSpeed * -1, 0));
+                _rigidbody2D.AddForce(new Vector2(_horizontalSpeed * -1 * Time.deltaTime, 0));
                 break;
             case AvatarStatus.Right:
-                this.GetComponent<Rigidbody2D>().AddForce(new Vector2(horizontalSpeed * 1, 0));
+                _rigidbody2D.AddForce(new Vector2(_horizontalSpeed * 1 * Time.deltaTime, 0));
                 break;
             case AvatarStatus.Idle:
                 break;
@@ -67,15 +73,15 @@ public class PlayerHandler : MonoBehaviour
             _blockStyle.normal.textColor = Color.black;
         }
 
-        if (_currentType == AvatarType.Black)
+        if (_avatarType == AvatarType.Black)
         {
             _avatarStyle.normal.textColor = Color.black;
         }
 
 
         GUI.Label(new Rect(x, 0, 150, 50), _blockType.currentType.ToString(), _blockStyle);
-        GUI.Label(new Rect(x, 50, 150, 50), _currentType.ToString(), _avatarStyle);
-        GUI.Label(new Rect(x, 100, 150, 50), currentStatus.ToString(), style);
+        GUI.Label(new Rect(x, 50, 150, 50), _avatarType.ToString(), _avatarStyle);
+        GUI.Label(new Rect(x, 100, 150, 50), _avatarStatus.ToString(), style);
     }
 
     #endregion
@@ -87,8 +93,13 @@ public class PlayerHandler : MonoBehaviour
         Wall wall = other.gameObject.GetComponent<Wall>();
         if (wall != null)
         {
-            this.currentStatus = AvatarStatus.Idle;
+            this._avatarStatus = AvatarStatus.Idle;
         }
+    }
+
+    public void OnCollisionExit2D(Collision2D other)
+    {
+        this._avatarStatus = AvatarStatus.Idle;
     }
 
     public void OnTriggerEnter2D(Collider2D other)
@@ -102,36 +113,58 @@ public class PlayerHandler : MonoBehaviour
 
     #region Public Function
 
+    public void SetHorizontalSpeed(float speed)
+    {
+        _horizontalSpeed = speed;
+    }
+
+    public void ChangeStatus(AvatarStatus status)
+    {
+        _avatarStatus = status;
+    }
+
     public void ChangeAvatarType()
     {
-        switch (_currentType)
+        switch (_avatarType)
         {
             case AvatarType.Black:
-                _currentType = AvatarType.White;
+                _avatarType = AvatarType.White;
                 break;
             case AvatarType.White:
-                _currentType = AvatarType.Black;
+                _avatarType = AvatarType.Black;
                 break;
         }
     }
 
+    /// <summary>
+    /// 取得權重 (同色+1 ，異色-1）
+    /// </summary>
+    /// <returns></returns>
     public int GetRank()
     {
         int result = 0;
-        //加速
-        if ((_blockType.currentType == BlockType.BLACK && _currentType == AvatarType.Black) ||
-            (_blockType.currentType == BlockType.WHITE && _currentType == AvatarType.White))
+        try
         {
-            result = 1;
-        }
+            //加速
+            if ((_blockType.currentType == BlockType.BLACK && _avatarType == AvatarType.Black) ||
+                (_blockType.currentType == BlockType.WHITE && _avatarType == AvatarType.White))
+            {
+                result = 1;
+            }
 
-        //減速
-        if ((_blockType.currentType == BlockType.BLACK && _currentType == AvatarType.White) ||
-            (_blockType.currentType == BlockType.WHITE && _currentType == AvatarType.Black))
+            //減速
+            if ((_blockType.currentType == BlockType.BLACK && _avatarType == AvatarType.White) ||
+                (_blockType.currentType == BlockType.WHITE && _avatarType == AvatarType.Black))
+            {
+                result = -1;
+            }
+        }
+        catch (Exception exp)
         {
-            result = -1;
+            Console.WriteLine(exp);
+            Debug.LogError(exp.ToString());
+            throw;
         }
-
         return result;
     }
 

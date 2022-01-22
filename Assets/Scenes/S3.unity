@@ -1238,7 +1238,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.56078434}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.2627451}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1619,7 +1619,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b996257b43164ab2a88f37ce0c64828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentStatus: 0
   horizontalSpeed: 40000
 --- !u!1001 &644435047
 PrefabInstance:
@@ -2609,9 +2608,10 @@ MonoBehaviour:
   objP1: {fileID: 1466365381}
   objP2: {fileID: 600771753}
   markObj: {fileID: 389999195}
-  horizontalSpeed: 40000
+  horizontalSpeed: 40000000
   verticalSpeed: 400
   scrollPanel: {fileID: 890419589}
+  wallPanel: {fileID: 1888583669}
 --- !u!4 &768915559
 Transform:
   m_ObjectHideFlags: 0
@@ -4215,7 +4215,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b996257b43164ab2a88f37ce0c64828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentStatus: 0
   horizontalSpeed: 40000
 --- !u!95 &1466365388
 Animator:
@@ -5262,7 +5261,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1888583670}
   m_Layer: 5
-  m_Name: Wall
+  m_Name: WallPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
