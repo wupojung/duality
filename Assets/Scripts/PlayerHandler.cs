@@ -12,7 +12,7 @@ public class PlayerHandler : MonoBehaviour
     public AnimatorController dayController;
 
     public AnimatorController nightController;
-    public Animator animator;
+    private Animator _animator;
 
 
     private AvatarStatus _avatarStatus;
@@ -43,6 +43,7 @@ public class PlayerHandler : MonoBehaviour
 
         _rigidbody2D = GetComponent<Rigidbody2D>();
 
+        _animator = GetComponent<Animator>();
 
         combeCountDownTimer = new System.Timers.Timer();
         combeCountDownTimer.Interval = 2000;
@@ -182,10 +183,12 @@ public class PlayerHandler : MonoBehaviour
         {
             case AvatarType.Black:
                 _avatarType = AvatarType.White;
+                _animator.SetBool("ChangeColorToBlack", false);
                 // animator.runtimeAnimatorController = dayController;
                 break;
             case AvatarType.White:
                 _avatarType = AvatarType.Black;
+                _animator.SetBool("ChangeColorToBlack", true);
                 // animator.runtimeAnimatorController = nightController;
                 break;
         }
@@ -210,6 +213,16 @@ public class PlayerHandler : MonoBehaviour
     }
 
 
+    public void PlayBooster()
+    {
+        if (_isCombe)
+        {
+            _animator.SetTrigger("Booster");
+            _isCombe = false;
+        }    
+    }
+    
+    
     public bool IsCombe
     {
         get => _isCombe;

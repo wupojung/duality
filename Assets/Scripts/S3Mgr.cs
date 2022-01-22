@@ -51,7 +51,7 @@ public class S3Mgr : MonoBehaviour
         _player2.SetHorizontalSpeed(horizontalSpeed);
 
         ScanPanelInWallPanel();
-        
+
         GameOverPanel.SetActive(false);
         _winPanel = GameOverPanel.transform.GetChild(0).gameObject;
     }
@@ -80,8 +80,6 @@ public class S3Mgr : MonoBehaviour
             _winPanel.SetActive(true);
             GameOverPanel.SetActive(true);
         }
-        
-        
     }
 
     private void OnGUI()
@@ -116,11 +114,6 @@ public class S3Mgr : MonoBehaviour
             {
                 //Debug.Log("P1 Change Color");
                 _player1.ChangeAvatarType();
-                //=============PlayerAnimation==============
-
-                PlayerAnimationManager.instance.PlayPlayerChangeColorAni(1);
-
-                //==========================================
             }
 
             if (Input.GetKeyDown(KeyCode.A))
@@ -136,14 +129,7 @@ public class S3Mgr : MonoBehaviour
             //P2
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
             {
-                //Debug.Log("P2 Change Color");
                 _player2.ChangeAvatarType();
-
-                //=============PlayerAnimation==============
-
-                PlayerAnimationManager.instance.PlayPlayerChangeColorAni(2);
-
-                //==========================================
             }
 
             if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -242,7 +228,7 @@ public class S3Mgr : MonoBehaviour
 
             //動態計算便宜的
             float offsetY = panel.GetComponent<GridLayoutGroup>().cellSize.y
-                            * (float)panel.transform.childCount
+                            * (float) panel.transform.childCount
                             / 2.0f;
 
 
@@ -394,11 +380,13 @@ public class S3Mgr : MonoBehaviour
             //TODO: 計算 combo邏輯
             if (_player1.IsCombe)
             {
+                _player1.PlayBooster();
                 _distance -= comboSpeed;
             }
 
             if (_player2.IsCombe)
             {
+                _player2.PlayBooster();
                 _distance += comboSpeed;
             }
         }
