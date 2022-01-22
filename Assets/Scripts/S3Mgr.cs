@@ -30,10 +30,6 @@ public class S3Mgr : MonoBehaviour
     public GameObject wallPanel;
 
 
-    //test 
-    public Sprite day;
-    public GameObject target;
-
     #region Unity core event
 
     void Start()
@@ -74,10 +70,6 @@ public class S3Mgr : MonoBehaviour
             _distance -= 100;
         }
 
-        if (GUI.Button(new Rect(0, 400, 100, 50), "Day"))
-        {
-            target.GetComponent<Image>().sprite = day;
-        }
     }
 
     #endregion
