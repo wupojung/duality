@@ -37,11 +37,18 @@ public class S3Mgr : MonoBehaviour
     private GameObject _winPanel;
     public Animator anim;
 
+    //粒子特效用
+    public GameObject ParticleSystemCameraPanel;
+    private ParticleSystem _particleForPlayer1;
+    private ParticleSystem _particleForPlayer2;
+
+
     #region Unity core event
 
     void Start()
     {
         ScanPanelInScrollPanel();
+        ScanParticleSystemInParticleSystemCameraPanel();
 
         _player1 = objP1.GetComponent<PlayerHandler>();
         _player2 = objP2.GetComponent<PlayerHandler>();
@@ -112,8 +119,8 @@ public class S3Mgr : MonoBehaviour
             //P1 
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S))
             {
-                //Debug.Log("P1 Change Color");
                 _player1.ChangeAvatarType();
+                _particleForPlayer1.Play();
             }
 
             if (Input.GetKeyDown(KeyCode.A))
@@ -130,6 +137,7 @@ public class S3Mgr : MonoBehaviour
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
             {
                 _player2.ChangeAvatarType();
+                _particleForPlayer2.Play();
             }
 
             if (Input.GetKeyDown(KeyCode.LeftArrow))
@@ -187,6 +195,47 @@ public class S3Mgr : MonoBehaviour
         }
     }
 
+
+    private void ScanParticleSystemInParticleSystemCameraPanel()
+    {
+        try
+        {
+            if (ParticleSystemCameraPanel == null)
+            {
+                throw new ArgumentNullException("ParticleSystemCameraPanel", "請重新設定ParticleSystemCameraPanel");
+            }
+
+            int childCount = ParticleSystemCameraPanel.transform.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                if (ParticleSystemCameraPanel.transform.GetChild(i).name.Contains("Player1"))
+                {
+                    _particleForPlayer1 = ParticleSystemCameraPanel.transform.GetChild(i).GetChild(0)
+                        .GetComponent<ParticleSystem>();
+                }
+
+                if (ParticleSystemCameraPanel.transform.GetChild(i).name.Contains("Player2"))
+                {
+                    _particleForPlayer2 = ParticleSystemCameraPanel.transform.GetChild(i).GetChild(0)
+                        .GetComponent<ParticleSystem>();
+                }
+            }
+
+            //check again 
+            if (_particleForPlayer1 == null || _particleForPlayer2 == null)
+            {
+                throw new ArgumentNullException("_particleForPlayer1 or _particleForPlayer2",
+                    "_particleForPlayer1 or 2 was empty");
+            }
+        }
+        catch (Exception exp)
+        {
+            Console.WriteLine(exp);
+            Debug.LogError(exp.ToString());
+            Console.WriteLine(exp);
+            throw;
+        }
+    }
 
     /// <summary>
     /// 掃描牆壁（同時修改成透明）
