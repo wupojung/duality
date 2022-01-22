@@ -14,6 +14,7 @@ public class S3Mgr : MonoBehaviour
     private PlayerHandler _player2;
 
     private float _distance = 0.0f;
+public float comboSpeed = 20.0f;
     public GameObject markObj;
 
     public float horizontalSpeed = 40000.0f;
@@ -354,12 +355,12 @@ public class S3Mgr : MonoBehaviour
             //TODO: 計算 combo邏輯
             if (_player1.IsCombe)
             {
-                _distance -= 20;
+                _distance -= comboSpeed;
             }
             
             if (_player2.IsCombe)
             {
-                _distance += 20;
+                _distance += comboSpeed;
             }
         }
         catch (Exception exp)
