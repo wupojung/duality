@@ -142,8 +142,18 @@ public class PlayerHandler : MonoBehaviour
     {
         _previousBlock = _blockType; //備份 前一個狀態
         BlockItem block = other.GetComponent<BlockItem>();
-        _blockType = block;
-        _rank = GetRank111();
+        if (block != null)
+        {
+            _blockType = block;
+            _rank = GetRank111();
+        }
+
+        if (other.name=="DeathLine")
+        {
+            
+            GameMgr.IsGameOver = true;
+
+        }
     }
 
     #endregion

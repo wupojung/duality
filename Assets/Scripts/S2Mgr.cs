@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,14 +15,12 @@ public class S2Mgr : MonoBehaviour
     public Sprite up_keySprite_down, down_keySprite_down, right_KeySprite_down, left_keySprite_down;
 
 
-
     public Sprite w_keySprite_keyUp, s_keySprite_keyUp, d_KeySprite_keyUp, a_keySprite_keyUp;
     public Sprite up_keySprite_keyUp, down_keySprite_keyUp, right_KeySprite_keyUp, left_keySprite_keyUp;
 
 
-
     public SpriteRenderer spriteRenderer_w, spriteRenderer_a, spriteRenderer_s, spriteRenderer_d;
-    
+
     // Start is called before the first frame update
     void Start()
     {
@@ -34,18 +33,18 @@ public class S2Mgr : MonoBehaviour
         //StartCoroutine(ExampleCoroutine());
         StartCoroutine(ChangeColor());
     }
+
     IEnumerator ExampleCoroutine()
     {
         ChgTextStatus();
         yield return new WaitForSeconds(2);
-
     }
+
     void TextControlVisible()
     {
         PressKeyText.active = !PressKeyText.active;
-       
-
     }
+
     public float delaySeconds = .5f;
 
     IEnumerator ChangeColor()
@@ -64,74 +63,72 @@ public class S2Mgr : MonoBehaviour
 
     void Chg_w()
     {
-      w_key.gameObject.GetComponent<Image>().sprite = w_keySprite_keyUp;
-
+        w_key.gameObject.GetComponent<Image>().sprite = w_keySprite_keyUp;
     }
+
     void Chg_a()
     {
         a_key.gameObject.GetComponent<Image>().sprite = a_keySprite_keyUp;
-
     }
+
     void Chg_s()
     {
         s_key.gameObject.GetComponent<Image>().sprite = s_keySprite_keyUp;
-
     }
+
     void Chg_d()
     {
         d_Key.gameObject.GetComponent<Image>().sprite = d_KeySprite_keyUp;
-
     }
-
 
 
     void Chg_up()
     {
         up_key.gameObject.GetComponent<Image>().sprite = up_keySprite_keyUp;
-
     }
+
     void Chg_down()
     {
         down_key.gameObject.GetComponent<Image>().sprite = down_keySprite_keyUp;
-
     }
+
     void Chg_left()
     {
         left_key.gameObject.GetComponent<Image>().sprite = left_keySprite_keyUp;
-
     }
+
     void Chg_right()
     {
         right_Key.gameObject.GetComponent<Image>().sprite = right_KeySprite_keyUp;
-
     }
 
     void ChgTextStatus()
     {
         Invoke("TextControlVisible", 2F);
     }
+
     // Update is called once per frame
     void Update()
     {
-
-
         if (Input.GetKeyDown(KeyCode.W))
         {
             w_key.gameObject.GetComponent<Image>().sprite = w_keySprite_down;
-            
+
             Invoke("Chg_w", .5F);
-       
         }
+
         if (Input.GetKeyDown(KeyCode.A))
         {
             a_key.gameObject.GetComponent<Image>().sprite = a_keySprite_down;
             Invoke("Chg_a", .5F);
         }
+
         if (Input.GetKeyDown(KeyCode.S))
         {
             s_key.gameObject.GetComponent<Image>().sprite = s_keySprite_down;
             Invoke("Chg_s", .5F);
         }
+
         if (Input.GetKeyDown(KeyCode.D))
         {
             d_Key.gameObject.GetComponent<Image>().sprite = d_KeySprite_down;
@@ -139,36 +136,47 @@ public class S2Mgr : MonoBehaviour
         }
 
 
-
         if (Input.GetKeyDown(KeyCode.UpArrow))
         {
             up_key.gameObject.GetComponent<Image>().sprite = up_keySprite_down;
             Invoke("Chg_up", .5F);
         }
+
         if (Input.GetKeyDown(KeyCode.DownArrow))
         {
             down_key.gameObject.GetComponent<Image>().sprite = down_keySprite_down;
             Invoke("Chg_down", .5F);
         }
+
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
             left_key.gameObject.GetComponent<Image>().sprite = left_keySprite_down;
             Invoke("Chg_left", .5F);
         }
+
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
             right_Key.gameObject.GetComponent<Image>().sprite = right_KeySprite_down;
             Invoke("Chg_right", .5F);
         }
 
-        //«ö¤Uenter ¶i¤J S3
+        //ï¿½ï¿½ï¿½Uenter ï¿½iï¿½J S3
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
+            GameMgr.Audio.PlayClick();
             Debug.Log("press enter !! ");
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene("S3");
         }
 
         //TextControlVisible();
-
     }
+    
+    // //for debug
+    // private void OnGUI()
+    // {
+    //     if (GUI.Button(new Rect(0, 0, 100, 50), "TEst"))
+    //     {
+    //         SceneManager.LoadScene("S1");
+    //     }
+    // }
 }

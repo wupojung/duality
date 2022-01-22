@@ -14,7 +14,7 @@ public class S3Mgr : MonoBehaviour
     private PlayerHandler _player2;
 
     private float _distance = 0.0f;
-public float comboSpeed = 20.0f;
+    public float comboSpeed = 20.0f;
     public GameObject markObj;
 
     public float horizontalSpeed = 40000.0f;
@@ -30,6 +30,12 @@ public float comboSpeed = 20.0f;
     //碰撞牆面
     public GameObject wallPanel;
 
+    // game logic
+    public GameObject GameOverPanel;
+    public Sprite win1;
+    public Sprite win2;
+    private GameObject _winPanel;
+    public Animator anim;
 
     #region Unity core event
 
@@ -45,15 +51,37 @@ public float comboSpeed = 20.0f;
         _player2.SetHorizontalSpeed(horizontalSpeed);
 
         ScanPanelInWallPanel();
+        
+        GameOverPanel.SetActive(false);
+        _winPanel = GameOverPanel.transform.GetChild(0).gameObject;
     }
 
 
     void Update()
     {
-        ScrollPaneMovement();
-        ProcessAvatarInput();
-        CalculateDistance();
-        CalculateCombo();
+        //確認動畫播放完畢
+        if (!GameMgr.IsGameStart && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
+        {
+            anim.gameObject.SetActive(false);
+            GameMgr.IsGameStart = true;
+        }
+
+        if (GameMgr.IsGameStart)
+        {
+            ScrollPaneMovement();
+            ProcessAvatarInput();
+            CalculateDistance();
+            CalculateCombo();
+        }
+
+        if (GameMgr.IsGameOver)
+        {
+            _winPanel.GetComponent<Image>().sprite = win1;
+            _winPanel.SetActive(true);
+            GameOverPanel.SetActive(true);
+        }
+        
+        
     }
 
     private void OnGUI()
@@ -247,7 +275,7 @@ public float comboSpeed = 20.0f;
                 BlockItem left = panelRoot.transform.GetChild(i).GetComponent<BlockItem>();
                 BlockItem right = panelRoot.transform.GetChild(i + 1).GetComponent<BlockItem>();
 
-                Debug.Log($"setup {left.name}  +  {right.name} ");
+                // Debug.Log($"setup {left.name}  +  {right.name} ");
 
                 int randomIndex = Random.Range(0, MapResourceHelper.Data.Count);
                 //左邊
@@ -255,13 +283,13 @@ public float comboSpeed = 20.0f;
                 {
                     left.currentType = BlockType.WHITE;
                     left.GetImage().sprite = MapResourceHelper.Data[randomIndex].Day.Left;
-                    Debug.Log("L->W  name=" + left.GetImage().sprite.name);
+                    //  Debug.Log("L->W  name=" + left.GetImage().sprite.name);
                 }
                 else
                 {
                     left.currentType = BlockType.BLACK;
                     left.GetImage().sprite = MapResourceHelper.Data[randomIndex].Night.Left;
-                    Debug.Log("L->B  name=" + left.GetImage().sprite.name);
+                    // Debug.Log("L->B  name=" + left.GetImage().sprite.name);
                 }
 
                 //右邊
@@ -269,13 +297,13 @@ public float comboSpeed = 20.0f;
                 {
                     right.currentType = BlockType.WHITE;
                     right.GetImage().sprite = MapResourceHelper.Data[randomIndex].Day.Right;
-                    Debug.Log("R->W  name=" + right.GetImage().sprite.name);
+                    // Debug.Log("R->W  name=" + right.GetImage().sprite.name);
                 }
                 else
                 {
                     right.currentType = BlockType.BLACK;
                     right.GetImage().sprite = MapResourceHelper.Data[randomIndex].Night.Right;
-                    Debug.Log("R->B  name=" + right.GetImage().sprite.name);
+                    //Debug.Log("R->B  name=" + right.GetImage().sprite.name);
                 }
             }
         }
@@ -357,7 +385,7 @@ public float comboSpeed = 20.0f;
             {
                 _distance -= comboSpeed;
             }
-            
+
             if (_player2.IsCombe)
             {
                 _distance += comboSpeed;

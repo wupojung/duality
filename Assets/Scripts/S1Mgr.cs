@@ -2,10 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+
 public class S1Mgr : MonoBehaviour
 {
     public float delaySeconds = .5f;
+
     public GameObject PressKeyText, PressKeyText2;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -31,15 +34,16 @@ public class S1Mgr : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter))
         {
+            GameMgr.Audio.PlayClick();
             Debug.Log("press enter !! ");
-            SceneManager.LoadScene(2);
+            SceneManager.LoadScene("S3");
         }
 
-        if (Input.GetKeyDown(KeyCode.Space) )
+        if (Input.GetKeyDown(KeyCode.Space))
         {
+            GameMgr.Audio.PlayClick();
             Debug.Log("press enter !! ");
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene("S2");
         }
-
     }
 }
