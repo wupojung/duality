@@ -190,15 +190,23 @@ public class S3Mgr : MonoBehaviour
             pos.y += verticalSpeed * Time.deltaTime;
             scrollPanel.transform.localPosition = pos;
 
-            //高度 255，  兩倍再移開 ，故為 255*5*2 = 2550
-            if (_scrollPanelList[_scrollPanelIndex].transform.position.y > 2550)
+            GameObject panel = _scrollPanelList[_scrollPanelIndex];  //cache
+           
+            //動態計算便宜的
+            float offsetY = panel.GetComponent<GridLayoutGroup>().cellSize.y
+                            * (float) panel.transform.childCount
+                            / 2.0f;
+
+
+            //高度 250，  兩倍再移開 ，故為 250*5*2 = 2500
+            if (panel.transform.position.y > offsetY * 2)
             {
-                Vector3 v3 = _scrollPanelList[_scrollPanelIndex].transform.localPosition;
-                v3.y -= 3825; // 255*5*3
-                _scrollPanelList[_scrollPanelIndex].transform.localPosition = v3;
+                Vector3 v3 = panel.transform.localPosition;
+                v3.y -= offsetY * _scrollPanelList.Count; // 255*5*3
+                panel.transform.localPosition = v3;
 
                 //TODO：reset 面板內容 （可能要人控）
-                RandomScrollPanel(_scrollPanelList[_scrollPanelIndex]);
+                RandomScrollPanel(panel);
 
                 //更新index,並修正
                 _scrollPanelIndex++;
@@ -245,7 +253,6 @@ public class S3Mgr : MonoBehaviour
     {
         try
         {
-        
             //計算
 
             //for debug mode （計算理論）

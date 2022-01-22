@@ -2695,7 +2695,7 @@ MonoBehaviour:
   objP2: {fileID: 600771753}
   markObj: {fileID: 389999195}
   horizontalSpeed: 40000000
-  verticalSpeed: 100
+  verticalSpeed: 400
   scrollPanel: {fileID: 890419589}
   wallPanel: {fileID: 1888583669}
 --- !u!4 &768915559
@@ -3421,8 +3421,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -1275}
-  m_SizeDelta: {x: 800, y: 1275}
+  m_AnchoredPosition: {x: 0, y: -1250}
+  m_SizeDelta: {x: 800, y: 1250}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1119672074
 MonoBehaviour:
@@ -3444,7 +3444,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 400, y: 255}
+  m_CellSize: {x: 400, y: 250}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -3598,7 +3598,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 800, y: 1275}
+  m_SizeDelta: {x: 800, y: 1250}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1137484656
 MonoBehaviour:
@@ -3620,7 +3620,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 400, y: 255}
+  m_CellSize: {x: 400, y: 250}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
@@ -4719,8 +4719,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 0, y: -2550}
-  m_SizeDelta: {x: 800, y: 1275}
+  m_AnchoredPosition: {x: 0, y: -2500}
+  m_SizeDelta: {x: 800, y: 1250}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &1661223628
 MonoBehaviour:
@@ -4742,7 +4742,7 @@ MonoBehaviour:
   m_ChildAlignment: 0
   m_StartCorner: 0
   m_StartAxis: 0
-  m_CellSize: {x: 400, y: 255}
+  m_CellSize: {x: 400, y: 250}
   m_Spacing: {x: 0, y: 0}
   m_Constraint: 0
   m_ConstraintCount: 2
