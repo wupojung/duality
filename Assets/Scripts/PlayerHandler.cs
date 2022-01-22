@@ -1,12 +1,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Timers;
+using UnityEditor.Animations;
 using UnityEditor.U2D.Path.GUIFramework;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 public class PlayerHandler : MonoBehaviour
 {
+
+    public AnimatorController dayController;
+ 
+    public AnimatorController nightController;
+    public Animator animator;
+
+    
     private AvatarStatus _avatarStatus;
 
     private AvatarType _avatarType;
@@ -21,6 +30,9 @@ public class PlayerHandler : MonoBehaviour
     public CircleCollider2D circleCollider2D;
     private int _rank = 0;
 
+    private bool _isCombe = false;
+
+    private Timer combeCountDownTimer;
 
     #region Unity core event
 
@@ -31,6 +43,18 @@ public class PlayerHandler : MonoBehaviour
         _avatarStatus = AvatarStatus.Idle;
 
         _rigidbody2D = GetComponent<Rigidbody2D>();
+
+
+        combeCountDownTimer = new System.Timers.Timer();
+        combeCountDownTimer.Interval = 2000;
+        combeCountDownTimer.Elapsed += new System.Timers.ElapsedEventHandler(_TimersTimer_Elapsed);
+        combeCountDownTimer.Start();
+    }
+
+    void _TimersTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+        //在這裡做想做的事    
+        _isCombe = false;
     }
 
     // Update is called once per frame
@@ -57,16 +81,18 @@ public class PlayerHandler : MonoBehaviour
 
 
         GUIStyle _blockStyle = new GUIStyle();
-        ;
         _blockStyle.fontSize = 30;
         _blockStyle.normal.textColor = Color.white;
 
 
         GUIStyle _avatarStyle = new GUIStyle();
-        ;
         _avatarStyle.fontSize = 30;
         _avatarStyle.normal.textColor = Color.white;
 
+        GUIStyle _comboStyle = new GUIStyle();
+        _comboStyle.fontSize = 30;
+        _comboStyle.normal.textColor = Color.white;
+        
         int x = 50;
         if (gameObject.name == "P2")
         {
@@ -83,10 +109,18 @@ public class PlayerHandler : MonoBehaviour
             _avatarStyle.normal.textColor = Color.black;
         }
 
+        
+
 
         GUI.Label(new Rect(x, 0, 150, 50), _blockType.currentType.ToString(), _blockStyle);
         GUI.Label(new Rect(x, 50, 150, 50), _avatarType.ToString(), _avatarStyle);
         GUI.Label(new Rect(x, 100, 150, 50), _avatarStatus.ToString(), style);
+  
+        if (_isCombe)
+        {
+            _comboStyle.normal.textColor = Color.red;
+            GUI.Label(new Rect(x, 150, 150, 50), "combo！", _comboStyle);
+        }
     }
 
     #endregion
@@ -140,9 +174,11 @@ public class PlayerHandler : MonoBehaviour
         {
             case AvatarType.Black:
                 _avatarType = AvatarType.White;
+                animator.runtimeAnimatorController = dayController;
                 break;
             case AvatarType.White:
                 _avatarType = AvatarType.Black;
+                animator.runtimeAnimatorController = nightController;
                 break;
         }
 
@@ -155,6 +191,10 @@ public class PlayerHandler : MonoBehaviour
                 || (_avatarType == AvatarType.White && _predictBlock.currentType == BlockType.WHITE))
             {
                 Debug.Log("Combo!!");
+                _isCombe = true;
+                //啟動計時器 關閉
+                combeCountDownTimer.Interval = 2000;
+                combeCountDownTimer.Start();
             }
         }
 
@@ -162,12 +202,17 @@ public class PlayerHandler : MonoBehaviour
     }
 
 
+    public bool IsCombe
+    {
+        get => _isCombe;
+        set => _isCombe = value;
+    }
 
     public int GetRank()
     {
         return _rank;
     }
-    
+
     /// <summary>
     /// 取得權重 (同色+1 ，異色-1）
     /// </summary>

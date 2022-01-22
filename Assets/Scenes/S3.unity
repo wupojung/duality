@@ -1686,6 +1686,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b996257b43164ab2a88f37ce0c64828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dayController: {fileID: 9100000, guid: 89cf52752492c4515a0c59e7577e90d6, type: 2}
+  nightController: {fileID: 9100000, guid: 95bcdd012ed9a47409c3065dad5473d4, type: 2}
+  animator: {fileID: 600771760}
   circleCollider2D: {fileID: 0}
 --- !u!95 &600771760
 Animator:
@@ -1697,7 +1700,7 @@ Animator:
   m_GameObject: {fileID: 600771753}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 95bcdd012ed9a47409c3065dad5473d4, type: 2}
+  m_Controller: {fileID: 9100000, guid: 89cf52752492c4515a0c59e7577e90d6, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -4302,6 +4305,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b996257b43164ab2a88f37ce0c64828, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dayController: {fileID: 9100000, guid: 89cf52752492c4515a0c59e7577e90d6, type: 2}
+  nightController: {fileID: 9100000, guid: 95bcdd012ed9a47409c3065dad5473d4, type: 2}
+  animator: {fileID: 1466365388}
   circleCollider2D: {fileID: 0}
 --- !u!95 &1466365388
 Animator:

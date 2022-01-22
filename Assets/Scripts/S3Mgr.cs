@@ -312,6 +312,10 @@ public class S3Mgr : MonoBehaviour
         try
         {
             //TODO: 計算 combo邏輯
+            if (_player1.IsCombe)
+            {
+                //加速
+            }
         }
         catch (Exception exp)
         {
