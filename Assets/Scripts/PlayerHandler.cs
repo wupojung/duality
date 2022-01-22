@@ -9,16 +9,16 @@ using UnityEngine.Serialization;
 
 public class PlayerHandler : MonoBehaviour
 {
-
     public AnimatorController dayController;
- 
+
     public AnimatorController nightController;
     public Animator animator;
 
-    
+
     private AvatarStatus _avatarStatus;
 
     private AvatarType _avatarType;
+    private BlockItem _previousBlock;
     private BlockItem _blockType;
     private BlockItem _predictBlock;
 
@@ -27,7 +27,6 @@ public class PlayerHandler : MonoBehaviour
 
     private Rigidbody2D _rigidbody2D;
 
-    public CircleCollider2D circleCollider2D;
     private int _rank = 0;
 
     private bool _isCombe = false;
@@ -92,7 +91,7 @@ public class PlayerHandler : MonoBehaviour
         GUIStyle _comboStyle = new GUIStyle();
         _comboStyle.fontSize = 30;
         _comboStyle.normal.textColor = Color.white;
-        
+
         int x = 50;
         if (gameObject.name == "P2")
         {
@@ -109,13 +108,11 @@ public class PlayerHandler : MonoBehaviour
             _avatarStyle.normal.textColor = Color.black;
         }
 
-        
-
 
         GUI.Label(new Rect(x, 0, 150, 50), _blockType.currentType.ToString(), _blockStyle);
         GUI.Label(new Rect(x, 50, 150, 50), _avatarType.ToString(), _avatarStyle);
         GUI.Label(new Rect(x, 100, 150, 50), _avatarStatus.ToString(), style);
-  
+
         if (_isCombe)
         {
             _comboStyle.normal.textColor = Color.red;
@@ -143,6 +140,7 @@ public class PlayerHandler : MonoBehaviour
 
     public void OnTriggerEnter2D(Collider2D other)
     {
+        _previousBlock = _blockType; //備份 前一個狀態
         BlockItem block = other.GetComponent<BlockItem>();
         _blockType = block;
         _rank = GetRank111();
@@ -234,6 +232,7 @@ public class PlayerHandler : MonoBehaviour
                 (_blockType.currentType == BlockType.WHITE && _avatarType == AvatarType.Black))
             {
                 result = -1;
+                _isCombe = false; //斷招，停combo
             }
         }
         catch (Exception exp)

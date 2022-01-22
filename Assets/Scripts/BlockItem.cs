@@ -33,12 +33,12 @@ public class BlockItem : MonoBehaviour
         switch (currentType)
         {
             case BlockType.BLACK:
-                _image.sprite = day;
+                _image.sprite = night;
                 _image.color = Color.white;
                 break;
             case BlockType.WHITE:
                 // image.material.color = Color.white;
-                _image.sprite = night;
+                _image.sprite = day;
                 _image.color = Color.white;
                 break;
         }
