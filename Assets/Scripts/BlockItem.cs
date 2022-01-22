@@ -9,10 +9,14 @@ public class BlockItem : MonoBehaviour
 {
     public BlockType currentType = BlockType.BLACK;
 
-
+  //  public 
+   // private Image _image;
+    public Sprite day;
+    public Sprite night;
     void Start()
     {
         //Refresh();
+       // _image = GetComponent<Image>();
     }
 
     private void Update()
@@ -24,16 +28,18 @@ public class BlockItem : MonoBehaviour
 
     public void Refresh()
     {
-        Image image = this.gameObject.GetComponent<Image>();
+        Image _image = this.gameObject.GetComponent<Image>();
         //TODO:後續配合美術動態抓圖
         switch (currentType)
         {
             case BlockType.BLACK:
-                image.color = Color.black;
+                _image.sprite = day;
+                _image.color = Color.white;
                 break;
             case BlockType.WHITE:
                 // image.material.color = Color.white;
-                image.color = Color.white;
+                _image.sprite = night;
+                _image.color = Color.white;
                 break;
         }
     }
@@ -44,6 +50,7 @@ public class BlockItem : MonoBehaviour
         {
             ChangeType();
         }
+        Refresh();
     }
     public void ChangeType()
     {

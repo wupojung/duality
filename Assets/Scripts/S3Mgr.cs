@@ -29,6 +29,11 @@ public class S3Mgr : MonoBehaviour
     //碰撞牆面
     public GameObject wallPanel;
 
+
+    //test 
+    public Sprite day;
+    public GameObject target;
+
     #region Unity core event
 
     void Start()
@@ -67,6 +72,11 @@ public class S3Mgr : MonoBehaviour
         if (GUI.Button(new Rect(0, 250, 100, 50), "-"))
         {
             _distance -= 100;
+        }
+
+        if (GUI.Button(new Rect(0, 400, 100, 50), "Day"))
+        {
+            target.GetComponent<Image>().sprite = day;
         }
     }
 
@@ -140,10 +150,16 @@ public class S3Mgr : MonoBehaviour
             int childCount = scrollPanel.transform.childCount;
             for (int i = 0; i < childCount; i++)
             {
-                _scrollPanelList.Add(scrollPanel.transform.GetChild(i).gameObject);
+                GameObject temp = scrollPanel.transform.GetChild(i).gameObject;
+                _scrollPanelList.Add(temp);
+
+                foreach (var blockItem in temp.GetComponentsInChildren<BlockItem>())
+                {
+                    blockItem.Refresh();
+                }
             }
 
-            Debug.Log($"{_scrollPanelList.Count}");
+            // Debug.Log($"{_scrollPanelList.Count}");
         }
         catch (Exception exp)
         {
@@ -190,8 +206,8 @@ public class S3Mgr : MonoBehaviour
             pos.y += verticalSpeed * Time.deltaTime;
             scrollPanel.transform.localPosition = pos;
 
-            GameObject panel = _scrollPanelList[_scrollPanelIndex];  //cache
-           
+            GameObject panel = _scrollPanelList[_scrollPanelIndex]; //cache
+
             //動態計算便宜的
             float offsetY = panel.GetComponent<GridLayoutGroup>().cellSize.y
                             * (float) panel.transform.childCount
