@@ -1003,6 +1003,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   source: {fileID: 721968554}
   clickClip: {fileID: 8300000, guid: 908c29577603342519cfe4f4f1c2191f, type: 3}
+  outofscreenClip: {fileID: 8300000, guid: fdda3c27cb119488883a69a3165d854b, type: 3}
+  changeColorClip: {fileID: 8300000, guid: 1a30636baf8334889802753d6fc7b9e5, type: 3}
+  speedUpClips:
+  - {fileID: 8300000, guid: 1bad5a092a69840cfab616706724de3c, type: 3}
+  - {fileID: 8300000, guid: f59d1d0d5d34043a6af49976cda2ebf6, type: 3}
+  - {fileID: 8300000, guid: 280c063267e4941f0bb3a8950f068a9f, type: 3}
 --- !u!114 &2111284195
 MonoBehaviour:
   m_ObjectHideFlags: 0

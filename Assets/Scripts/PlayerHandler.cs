@@ -55,6 +55,10 @@ public class PlayerHandler : MonoBehaviour
 
     private void OnGUI()
     {
+        if (!GameMgr.IsDebug)
+        {
+            return;
+        }
         GUIStyle style = new GUIStyle();
         style.fontSize = 30;
         style.normal.textColor = Color.white;
@@ -79,7 +83,7 @@ public class PlayerHandler : MonoBehaviour
             x += 150;
         }
 
-        if (_blockType.currentType == BlockType.BLACK)
+        if (_blockType?.currentType == BlockType.BLACK)
         {
             blockStyle.normal.textColor = Color.black;
         }
@@ -90,7 +94,7 @@ public class PlayerHandler : MonoBehaviour
         }
 
 
-        GUI.Label(new Rect(x, 0, 150, 50), _blockType.currentType.ToString(), blockStyle);
+        GUI.Label(new Rect(x, 0, 150, 50), _blockType?.currentType.ToString(), blockStyle);
         GUI.Label(new Rect(x, 50, 150, 50), _avatarType.ToString(), avatarStyle);
         GUI.Label(new Rect(x, 100, 150, 50), _avatarStatus.ToString(), style);
 
@@ -130,6 +134,7 @@ public class PlayerHandler : MonoBehaviour
 
         if (other.name == "DeathLine")
         {
+            GameMgr.Audio.PlayOutOfScreen();
             GameMgr.IsGameOver = true;
         }
     }

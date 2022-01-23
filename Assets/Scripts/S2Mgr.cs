@@ -21,6 +21,14 @@ public class S2Mgr : MonoBehaviour
 
     public SpriteRenderer spriteRenderer_w, spriteRenderer_a, spriteRenderer_s, spriteRenderer_d;
 
+    private void Awake()
+    {
+        //如果Audio沒有啟動，直接帶回S1 (引擎沒有啟動)
+        if (GameMgr.Audio == null)
+        {
+            SceneManager.LoadScene("S1");
+        }
+    }
     // Start is called before the first frame update
     void Start()
     {

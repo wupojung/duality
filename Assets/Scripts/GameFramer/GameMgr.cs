@@ -10,4 +10,6 @@ public static class GameMgr
     public static bool IsGameOver;
 
     public static AudioMgr Audio;
+
+    public static bool IsDebug = false;
 }

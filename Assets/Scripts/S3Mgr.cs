@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -32,18 +33,33 @@ public class S3Mgr : MonoBehaviour
 
     // game logic
     public GameObject GameOverPanel;
-    public Sprite win1;
-    public Sprite win2;
-    private GameObject _winPanel;
-    public Animator anim;
 
+    private GameObject _winPanel;
+
+    public Animator openAnimator;
+    public Animator winnerAnimator;
+
+    public Button btnContinue;
+    
+    
     //粒子特效用
     public GameObject ParticleSystemCameraPanel;
     private ParticleSystem _particleForPlayer1;
     private ParticleSystem _particleForPlayer2;
 
+    
+    
 
     #region Unity core event
+
+    private void Awake()
+    {
+        //如果Audio沒有啟動，直接帶回S1 (引擎沒有啟動)
+        if (GameMgr.Audio == null)
+        {
+            SceneManager.LoadScene("S1");
+        }
+    }
 
     void Start()
     {
@@ -67,9 +83,9 @@ public class S3Mgr : MonoBehaviour
     void Update()
     {
         //確認動畫播放完畢
-        if (!GameMgr.IsGameStart && anim.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
+        if (!GameMgr.IsGameStart && openAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
         {
-            anim.gameObject.SetActive(false);
+            openAnimator.gameObject.SetActive(false);
             GameMgr.IsGameStart = true;
         }
 
@@ -83,7 +99,7 @@ public class S3Mgr : MonoBehaviour
 
         if (GameMgr.IsGameOver)
         {
-            _winPanel.GetComponent<Image>().sprite = win1;
+            winnerAnimator.SetBool("p2win", CheckIsP2Win());
             _winPanel.SetActive(true);
             GameOverPanel.SetActive(true);
         }
@@ -91,6 +107,10 @@ public class S3Mgr : MonoBehaviour
 
     private void OnGUI()
     {
+        if (!GameMgr.IsDebug)
+        {
+            return;
+        }
         GUI.Label(new Rect(0, 180, 100, 50), _distance.ToString());
 
 
@@ -109,6 +129,26 @@ public class S3Mgr : MonoBehaviour
 
     #region Support function（private）
 
+    private bool CheckIsP2Win()
+    {
+        bool result = false;
+        try
+        {
+            if (_player1.gameObject.transform.localPosition.y > _player2.gameObject.transform.localPosition.y)
+            {
+                result = true;
+            }
+        }
+        catch (Exception exp)
+        {
+            Console.WriteLine(exp);
+            Debug.LogError(exp.ToString());
+            throw;
+        }
+
+        return result;
+    }
+
     /// <summary>
     /// 處理移動輸入(input)
     /// </summary>
@@ -119,6 +159,7 @@ public class S3Mgr : MonoBehaviour
             //P1 
             if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S))
             {
+                GameMgr.Audio.PlayChangeColor();
                 _player1.ChangeAvatarType();
                 _particleForPlayer1.Play();
             }
@@ -136,6 +177,7 @@ public class S3Mgr : MonoBehaviour
             //P2
             if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
             {
+                GameMgr.Audio.PlayChangeColor();
                 _player2.ChangeAvatarType();
                 _particleForPlayer2.Play();
             }
@@ -429,12 +471,14 @@ public class S3Mgr : MonoBehaviour
             //TODO: 計算 combo邏輯
             if (_player1.IsCombe)
             {
+                GameMgr.Audio.PlaySpeedUp();
                 _player1.PlayBooster();
                 _distance -= comboSpeed;
             }
 
             if (_player2.IsCombe)
             {
+                GameMgr.Audio.PlaySpeedUp();
                 _player2.PlayBooster();
                 _distance += comboSpeed;
             }
@@ -445,6 +489,12 @@ public class S3Mgr : MonoBehaviour
             Debug.LogError(exp.ToString());
             throw;
         }
+    }
+
+    private void OnBtnContinueClick()
+    {
+        GameMgr.Audio.PlayClick();
+        SceneManager.LoadScene("S2");
     }
 
     #endregion
