@@ -7,64 +7,60 @@ using Random = UnityEngine.Random;
 
 public class S3Mgr : MonoBehaviour
 {
-  
     #region Config
-    
-    [Header("地圖速度(垂直)")] 
-    public float verticalSpeed = 2000.0f;
 
-    [Header("左右移動速度(水平)")] 
-    public float horizontalSpeed = 40000.0f;
+    [Header("遊戲時間")] public float gameInterval = 30000f;  //30 sec
 
-    
-    [Header("變身CD時間")] 
-    public float transformationInterval = 200.0f;
-    
-    [Header("加速速度")] 
-    public float boosterSpeed = 0.1f;
-    
-    [Header("加速持續時間")] 
-    public float boosterInterval = 2000.0f;
+    [Header("地圖速度(垂直)")] public float verticalSpeed = 2000.0f;
+
+    [Header("左右移動速度(水平)")] public float horizontalSpeed = 40000.0f;
+
+
+    [Header("變身CD時間")] public float transformationInterval = 200.0f;
+
+    [Header("加速速度")] public float boosterSpeed = 0.1f;
+
+    [Header("加速持續時間")] public float boosterInterval = 2000.0f;
+
     #endregion
-  
+
     #region Variables Area
 
     // -- core panel
     private GameObject _bgPanel;
     private GameObject _fgPanel;
     private GameObject _uiPanel;
-    
+
     // -- Gameplay
     private GameObject _gameOverPanel;
     private GameObject _winPanel;
-    private Button _btnContinue;  //繼續按鈕
+    private Button _btnContinue; //繼續按鈕
 
     // -- 玩家相關
     private PlayerHandler _player1;
     private PlayerHandler _player2;
-    
+
     // -- 模擬跑步差距
-    private GameObject _centerLineObj;  //中心線物件(拿來計算用）
+    private GameObject _centerLineObj; //中心線物件(拿來計算用）
     private float _distance = 0.0f;
-    
+
     // -- 地圖模組
     private GameObject _scrollPanel;
     private IList<GameObject> _scrollPanelList; //子物件
     private int _scrollPanelIndex = 0; // 索引
-    private GameObject _wallPanel;  // 牆面
-    
+    private GameObject _wallPanel; // 牆面
+
     // -- 動畫模組
     private Animator _openAnimator;
     private Animator _winnerAnimator;
-    
+
     // -- 粒子特效用
     private GameObject _particleSystemCameraPanel;
     private ParticleSystem _particleForPlayer1;
     private ParticleSystem _particleForPlayer2;
 
-    
     #endregion
-    
+
     #region Unity Core Event
 
     private void Awake()
@@ -85,7 +81,7 @@ public class S3Mgr : MonoBehaviour
         ScanParticleSystemCameraPanel();
 
         ResetConfig(); //設定參數
-        ResetForGameStart();  //重設遊戲
+        ResetForGameStart(); //重設遊戲
     }
 
     private void Update()
@@ -143,13 +139,12 @@ public class S3Mgr : MonoBehaviour
         _player1.SetHorizontalSpeed(horizontalSpeed);
         _player1.SetBoosterCoolDownTime(boosterInterval);
         _player1.SetTransformationCoolDownTime(transformationInterval);
-        
+
         _player2.SetHorizontalSpeed(horizontalSpeed);
         _player2.SetBoosterCoolDownTime(boosterInterval);
         _player2.SetTransformationCoolDownTime(transformationInterval);
-
     }
-    
+
     private void ResetForGameStart()
     {
         GameMgr.IsGameOver = false;
@@ -527,31 +522,37 @@ public class S3Mgr : MonoBehaviour
             // 顯示
             if (_distance == 0)
             {
-                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
+                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _centerLineObj.transform.localPosition.y,
+                    0);
                 _player1.transform.localPosition = p1v3;
 
-                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
+                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _centerLineObj.transform.localPosition.y,
+                    0);
                 _player2.transform.localPosition = p2v3;
             }
 
             if (_distance > 0)
             {
-                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
+                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _centerLineObj.transform.localPosition.y,
+                    0);
                 p1v3.y += Math.Abs(_distance / 2);
                 _player1.transform.localPosition = p1v3;
 
-                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
+                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _centerLineObj.transform.localPosition.y,
+                    0);
                 p2v3.y -= Math.Abs(_distance / 2);
                 _player2.transform.localPosition = p2v3;
             }
 
             if (_distance < 0)
             {
-                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
+                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _centerLineObj.transform.localPosition.y,
+                    0);
                 p1v3.y -= Math.Abs(_distance / 2);
                 _player1.transform.localPosition = p1v3;
 
-                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
+                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _centerLineObj.transform.localPosition.y,
+                    0);
                 p2v3.y += Math.Abs(_distance / 2);
                 _player2.transform.localPosition = p2v3;
             }
@@ -596,7 +597,7 @@ public class S3Mgr : MonoBehaviour
 
     #endregion
 
-    #region Events 
+    #region Events
 
     /// <summary>
     /// 計算按鈕
@@ -606,8 +607,6 @@ public class S3Mgr : MonoBehaviour
         GameMgr.Audio.PlayClick();
         SceneManager.LoadScene("S2");
     }
-
-    
 
     #endregion
 }
