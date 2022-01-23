@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Timers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,7 +10,7 @@ public class S3Mgr : MonoBehaviour
 {
     #region Config
 
-    [Header("遊戲時間")] public float gameInterval = 30000f;  //30 sec
+    [Header("遊戲時間")] public int gameTimer = 30; //30 sec
 
     [Header("地圖速度(垂直)")] public float verticalSpeed = 2000.0f;
 
@@ -35,6 +36,8 @@ public class S3Mgr : MonoBehaviour
     private GameObject _gameOverPanel;
     private GameObject _winPanel;
     private Button _btnContinue; //繼續按鈕
+    private int _duration; //遊戲持續時間
+
 
     // -- 玩家相關
     private PlayerHandler _player1;
@@ -53,11 +56,15 @@ public class S3Mgr : MonoBehaviour
     // -- 動畫模組
     private Animator _openAnimator;
     private Animator _winnerAnimator;
+    private Animator _hurryUpAnimator;
 
     // -- 粒子特效用
     private GameObject _particleSystemCameraPanel;
     private ParticleSystem _particleForPlayer1;
     private ParticleSystem _particleForPlayer2;
+
+    // -- core timer 
+    private Timer _preSecondTimer;
 
     #endregion
 
@@ -84,6 +91,21 @@ public class S3Mgr : MonoBehaviour
         ResetForGameStart(); //重設遊戲
     }
 
+    private void CheckIsTimesUp()
+    {
+        if (_duration > gameTimer - 10)
+        {
+            //播放警告畫面
+            Debug.LogWarning("!!! hurry up !!");
+            _hurryUpAnimator.gameObject.SetActive(true);
+        }
+
+        if (_duration > gameTimer)
+        {
+            GameMgr.IsTimesUp = true;
+        }
+    }
+
     private void Update()
     {
         //確認動畫播放完畢
@@ -91,10 +113,12 @@ public class S3Mgr : MonoBehaviour
         {
             _openAnimator.gameObject.SetActive(false);
             GameMgr.IsGameStart = true;
+            _preSecondTimer.Start(); //遊戲開始計時
         }
 
         if (GameMgr.IsGameStart)
         {
+            CheckIsTimesUp();
             ScrollPaneMovement();
             ProcessAvatarInput();
             CalculateDistance();
@@ -106,6 +130,13 @@ public class S3Mgr : MonoBehaviour
             _winnerAnimator.SetBool("p2win", CheckIsP2Win());
             _winPanel.SetActive(true);
             _gameOverPanel.SetActive(true);
+        }
+
+        if (GameMgr.IsTimesUp)
+        {
+            //TODO:播放時間到動畫
+
+            GameMgr.IsGameOver = true;
         }
     }
 
@@ -147,9 +178,15 @@ public class S3Mgr : MonoBehaviour
 
     private void ResetForGameStart()
     {
-        GameMgr.IsGameOver = false;
-        GameMgr.IsGameStart = false;
+        GameMgr.ResetGame();
         _gameOverPanel.SetActive(false);
+        _hurryUpAnimator.gameObject.SetActive(false);
+
+        //啟動timer
+        _preSecondTimer = new System.Timers.Timer {Interval = 1000}; //固定1秒
+        _preSecondTimer.AutoReset = true;
+        _preSecondTimer.Elapsed += new System.Timers.ElapsedEventHandler(GameTimer_Elapsed);
+        // _gameTimer.Start();
     }
 
     #region Scan
@@ -193,6 +230,13 @@ public class S3Mgr : MonoBehaviour
         _wallPanel = ScanHelper.ScanGameObjectByName(OperationArea, "WallPanel");
         ScanPanelInWallPanel();
 
+        GameObject alertPanel = _wallPanel = ScanHelper.ScanGameObjectByName(OperationArea, "AlertPanel");
+        if (alertPanel != null)
+        {
+            _hurryUpAnimator = alertPanel.GetComponent<Animator>();
+        }
+
+        //
         //-- L
         //-- R
     }
@@ -606,6 +650,11 @@ public class S3Mgr : MonoBehaviour
     {
         GameMgr.Audio.PlayClick();
         SceneManager.LoadScene("S2");
+    }
+
+    private void GameTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+        _duration++;
     }
 
     #endregion
