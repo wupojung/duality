@@ -1,54 +1,52 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class S3Mgr : MonoBehaviour
 {
-    public GameObject objP1;
-    public GameObject objP2;
     private PlayerHandler _player1;
     private PlayerHandler _player2;
 
     private float _distance = 0.0f;
     public float comboSpeed = 20.0f;
-    public GameObject markObj;
+    private GameObject _markObj;
 
     public float horizontalSpeed = 40000.0f;
+
+    //core panel
+    private GameObject _bgPanel;
+    private GameObject _fgPanel;
+    private GameObject _uiPanel;
 
 
     //移動面板(底板，block)
     public float verticalSpeed = 2000.0f;
-    public GameObject scrollPanel;
+    private GameObject _scrollPanel;
     private IList<GameObject> _scrollPanelList; //子物件
     private int _scrollPanelIndex = 0; // 索引
 
 
     //碰撞牆面
-    public GameObject wallPanel;
+    private GameObject _wallPanel;
 
     // game logic
-    public GameObject GameOverPanel;
-
+    private GameObject _gameOverPanel;
     private GameObject _winPanel;
 
-    public Animator openAnimator;
-    public Animator winnerAnimator;
+    private Animator _openAnimator;
+    private Animator _winnerAnimator;
 
-    public Button btnContinue;
-    
-    
+    private Button _btnContinue;
+
+
     //粒子特效用
-    public GameObject ParticleSystemCameraPanel;
+    private GameObject _particleSystemCameraPanel;
     private ParticleSystem _particleForPlayer1;
     private ParticleSystem _particleForPlayer2;
 
-    
-    
 
     #region Unity core event
 
@@ -63,29 +61,31 @@ public class S3Mgr : MonoBehaviour
 
     void Start()
     {
-        ScanPanelInScrollPanel();
-        ScanParticleSystemInParticleSystemCameraPanel();
+        ScanRequirementGameObject();
 
-        _player1 = objP1.GetComponent<PlayerHandler>();
-        _player2 = objP2.GetComponent<PlayerHandler>();
+        ScanFG();
+        ScanUI();
+        ScanParticleSystemCameraPanel();
+
+
+
 
         //setup parms
         _player1.SetHorizontalSpeed(horizontalSpeed);
         _player2.SetHorizontalSpeed(horizontalSpeed);
 
-        ScanPanelInWallPanel();
 
-        GameOverPanel.SetActive(false);
-        _winPanel = GameOverPanel.transform.GetChild(0).gameObject;
+        _gameOverPanel.SetActive(false);
+
+        _btnContinue.onClick.AddListener(OnBtnContinueClick);
     }
-
 
     void Update()
     {
         //確認動畫播放完畢
-        if (!GameMgr.IsGameStart && openAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
+        if (!GameMgr.IsGameStart && _openAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
         {
-            openAnimator.gameObject.SetActive(false);
+            _openAnimator.gameObject.SetActive(false);
             GameMgr.IsGameStart = true;
         }
 
@@ -99,9 +99,9 @@ public class S3Mgr : MonoBehaviour
 
         if (GameMgr.IsGameOver)
         {
-            winnerAnimator.SetBool("p2win", CheckIsP2Win());
+            _winnerAnimator.SetBool("p2win", CheckIsP2Win());
             _winPanel.SetActive(true);
-            GameOverPanel.SetActive(true);
+            _gameOverPanel.SetActive(true);
         }
     }
 
@@ -111,6 +111,7 @@ public class S3Mgr : MonoBehaviour
         {
             return;
         }
+
         GUI.Label(new Rect(0, 180, 100, 50), _distance.ToString());
 
 
@@ -128,6 +129,183 @@ public class S3Mgr : MonoBehaviour
     #endregion
 
     #region Support function（private）
+
+    #region Scan
+
+    private void ScanRequirementGameObject()
+    {
+        GameObject mainCamera = ScanHelper.ScanGameObjectByName(this.gameObject, "Main Camera");
+
+        GameObject canvas = ScanHelper.ScanGameObjectByName(mainCamera, "Canvas");
+
+        _fgPanel = ScanHelper.ScanGameObjectByName(canvas, "FG");
+
+        _uiPanel = ScanHelper.ScanGameObjectByName(canvas, "UI");
+
+        _particleSystemCameraPanel = ScanHelper.ScanGameObjectByName(this.gameObject, "3rdCamera");
+    }
+
+    #region Scan  FG
+
+    private void ScanFG()
+    {
+        //-- OperationArea
+        GameObject OperationArea = ScanHelper.ScanGameObjectByName(_fgPanel, "OperationArea");
+
+        //-- OperationArea/ScrollPanel
+        _scrollPanel = ScanHelper.ScanGameObjectByName(OperationArea, "ScrollPanel");
+        ScanPanelInScrollPanel();
+
+        //-- OperationArea/Player
+        GameObject playerPanel = ScanHelper.ScanGameObjectByName(OperationArea, "Player");
+     GameObject   p1 = ScanHelper.ScanGameObjectByName(playerPanel, "P1");
+     GameObject   p2 = ScanHelper.ScanGameObjectByName(playerPanel, "P2");
+        
+        _player1 = p1.GetComponent<PlayerHandler>();
+        _player2 = p2.GetComponent<PlayerHandler>();
+        
+        _markObj = ScanHelper.ScanGameObjectByName(playerPanel, "Mark");
+        
+
+        //-- OperationArea/WallPanel
+        _wallPanel = ScanHelper.ScanGameObjectByName(OperationArea, "WallPanel");
+        ScanPanelInWallPanel();
+
+        //-- L
+        //-- R
+    }
+
+    /// <summary>
+    /// 掃描物件
+    /// </summary>
+    /// <exception cref="NullReferenceException"></exception>
+    private void ScanPanelInScrollPanel()
+    {
+        try
+        {
+            if (_scrollPanel == null)
+            {
+                throw new NullReferenceException("scrollPanel  was null ");
+            }
+
+            _scrollPanelList = new List<GameObject>();
+            int childCount = _scrollPanel.transform.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                GameObject temp = _scrollPanel.transform.GetChild(i).gameObject;
+                _scrollPanelList.Add(temp);
+
+                RandomScrollPanel(temp);
+            }
+        }
+        catch (Exception exp)
+        {
+            Console.WriteLine(exp);
+            Debug.LogError(exp.ToString());
+            throw;
+        }
+    }
+
+    /// <summary>
+    /// 掃描牆壁（同時修改成透明）
+    /// </summary>
+    private void ScanPanelInWallPanel()
+    {
+        try
+        {
+            int childCount = _wallPanel.transform.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                Image wall = _wallPanel.transform.GetChild(i).GetComponentInChildren<Image>();
+                Color color = wall.color;
+                color.a = 0;
+                wall.color = color;
+            }
+        }
+        catch (Exception exp)
+        {
+            Console.WriteLine(exp);
+            Debug.LogError(exp.ToString());
+            throw;
+        }
+    }
+
+    #endregion
+
+    #region Scan UI
+
+    private void ScanUI()
+    {
+        //---
+        GameObject StartCountDown = ScanHelper.ScanGameObjectByName(_uiPanel, "StartCountDown");
+        _openAnimator = StartCountDown.GetComponent<Animator>();
+
+        //---
+        _gameOverPanel = ScanHelper.ScanGameObjectByName(_uiPanel, "GameOverPanel");
+        ScanGamOverPanel();
+    }
+
+    private void ScanGamOverPanel()
+    {
+        _winPanel = ScanHelper.ScanGameObjectByName(_gameOverPanel, "WinPanel");
+        _winnerAnimator = _winPanel.GetComponent<Animator>();
+        
+        GameObject continueObj = ScanHelper.ScanGameObjectByName(_gameOverPanel, "btnContinue");
+        if (continueObj != null)
+        {
+            _btnContinue = continueObj.GetComponent<Button>();
+        }
+        
+    }
+
+    #endregion
+
+    /// <summary>
+    /// 掃描粒子攝影機面板
+    /// </summary>
+    /// <exception cref="ArgumentNullException"></exception>
+    private void ScanParticleSystemCameraPanel()
+    {
+        try
+        {
+            if (_particleSystemCameraPanel == null)
+            {
+                throw new ArgumentNullException("ParticleSystemCameraPanel", "請重新設定ParticleSystemCameraPanel");
+            }
+
+            int childCount = _particleSystemCameraPanel.transform.childCount;
+            for (int i = 0; i < childCount; i++)
+            {
+                if (_particleSystemCameraPanel.transform.GetChild(i).name.Contains("Player1"))
+                {
+                    _particleForPlayer1 = _particleSystemCameraPanel.transform.GetChild(i).GetChild(0)
+                        .GetComponent<ParticleSystem>();
+                }
+
+                if (_particleSystemCameraPanel.transform.GetChild(i).name.Contains("Player2"))
+                {
+                    _particleForPlayer2 = _particleSystemCameraPanel.transform.GetChild(i).GetChild(0)
+                        .GetComponent<ParticleSystem>();
+                }
+            }
+
+            //check again 
+            if (_particleForPlayer1 == null || _particleForPlayer2 == null)
+            {
+                throw new ArgumentNullException("_particleForPlayer1 or _particleForPlayer2",
+                    "_particleForPlayer1 or 2 was empty");
+            }
+        }
+        catch (Exception exp)
+        {
+            Console.WriteLine(exp);
+            Debug.LogError(exp.ToString());
+            Console.WriteLine(exp);
+            throw;
+        }
+    }
+
+    #endregion
 
     private bool CheckIsP2Win()
     {
@@ -200,108 +378,6 @@ public class S3Mgr : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 掃描物件
-    /// </summary>
-    /// <exception cref="NullReferenceException"></exception>
-    private void ScanPanelInScrollPanel()
-    {
-        try
-        {
-            if (scrollPanel == null)
-            {
-                throw new NullReferenceException("scrollPanel  was null ");
-            }
-
-            _scrollPanelList = new List<GameObject>();
-            int childCount = scrollPanel.transform.childCount;
-            for (int i = 0; i < childCount; i++)
-            {
-                GameObject temp = scrollPanel.transform.GetChild(i).gameObject;
-                _scrollPanelList.Add(temp);
-
-                RandomScrollPanel(temp);
-                // foreach (var blockItem in temp.GetComponentsInChildren<BlockItem>())
-                // {
-                //     blockItem.Refresh();
-                // }
-            }
-
-            // Debug.Log($"{_scrollPanelList.Count}");
-        }
-        catch (Exception exp)
-        {
-            Console.WriteLine(exp);
-            Debug.LogError(exp.ToString());
-            throw;
-        }
-    }
-
-
-    private void ScanParticleSystemInParticleSystemCameraPanel()
-    {
-        try
-        {
-            if (ParticleSystemCameraPanel == null)
-            {
-                throw new ArgumentNullException("ParticleSystemCameraPanel", "請重新設定ParticleSystemCameraPanel");
-            }
-
-            int childCount = ParticleSystemCameraPanel.transform.childCount;
-            for (int i = 0; i < childCount; i++)
-            {
-                if (ParticleSystemCameraPanel.transform.GetChild(i).name.Contains("Player1"))
-                {
-                    _particleForPlayer1 = ParticleSystemCameraPanel.transform.GetChild(i).GetChild(0)
-                        .GetComponent<ParticleSystem>();
-                }
-
-                if (ParticleSystemCameraPanel.transform.GetChild(i).name.Contains("Player2"))
-                {
-                    _particleForPlayer2 = ParticleSystemCameraPanel.transform.GetChild(i).GetChild(0)
-                        .GetComponent<ParticleSystem>();
-                }
-            }
-
-            //check again 
-            if (_particleForPlayer1 == null || _particleForPlayer2 == null)
-            {
-                throw new ArgumentNullException("_particleForPlayer1 or _particleForPlayer2",
-                    "_particleForPlayer1 or 2 was empty");
-            }
-        }
-        catch (Exception exp)
-        {
-            Console.WriteLine(exp);
-            Debug.LogError(exp.ToString());
-            Console.WriteLine(exp);
-            throw;
-        }
-    }
-
-    /// <summary>
-    /// 掃描牆壁（同時修改成透明）
-    /// </summary>
-    private void ScanPanelInWallPanel()
-    {
-        try
-        {
-            int childCount = wallPanel.transform.childCount;
-            for (int i = 0; i < childCount; i++)
-            {
-                Image wall = wallPanel.transform.GetChild(i).GetComponentInChildren<Image>();
-                Color color = wall.color;
-                color.a = 0;
-                wall.color = color;
-            }
-        }
-        catch (Exception exp)
-        {
-            Console.WriteLine(exp);
-            Debug.LogError(exp.ToString());
-            throw;
-        }
-    }
 
     /// <summary>
     /// 移動面板
@@ -311,9 +387,9 @@ public class S3Mgr : MonoBehaviour
         try
         {
             //scroll panel movement 
-            Vector3 pos = scrollPanel.transform.localPosition;
+            Vector3 pos = _scrollPanel.transform.localPosition;
             pos.y += verticalSpeed * Time.deltaTime;
-            scrollPanel.transform.localPosition = pos;
+            _scrollPanel.transform.localPosition = pos;
 
             GameObject panel = _scrollPanelList[_scrollPanelIndex]; //cache
 
@@ -424,33 +500,33 @@ public class S3Mgr : MonoBehaviour
             // 顯示
             if (_distance == 0)
             {
-                Vector3 p1v3 = new Vector3(objP1.transform.localPosition.x, markObj.transform.localPosition.y, 0);
-                objP1.transform.localPosition = p1v3;
+                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
+                _player1.transform.localPosition = p1v3;
 
-                Vector3 p2v3 = new Vector3(objP2.transform.localPosition.x, markObj.transform.localPosition.y, 0);
-                objP2.transform.localPosition = p2v3;
+                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
+                _player2.transform.localPosition = p2v3;
             }
 
             if (_distance > 0)
             {
-                Vector3 p1v3 = new Vector3(objP1.transform.localPosition.x, markObj.transform.localPosition.y, 0);
+                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
                 p1v3.y += Math.Abs(_distance / 2);
-                objP1.transform.localPosition = p1v3;
+                _player1.transform.localPosition = p1v3;
 
-                Vector3 p2v3 = new Vector3(objP2.transform.localPosition.x, markObj.transform.localPosition.y, 0);
+                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
                 p2v3.y -= Math.Abs(_distance / 2);
-                objP2.transform.localPosition = p2v3;
+                _player2.transform.localPosition = p2v3;
             }
 
             if (_distance < 0)
             {
-                Vector3 p1v3 = new Vector3(objP1.transform.localPosition.x, markObj.transform.localPosition.y, 0);
+                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
                 p1v3.y -= Math.Abs(_distance / 2);
-                objP1.transform.localPosition = p1v3;
+                _player1.transform.localPosition = p1v3;
 
-                Vector3 p2v3 = new Vector3(objP2.transform.localPosition.x, markObj.transform.localPosition.y, 0);
+                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
                 p2v3.y += Math.Abs(_distance / 2);
-                objP2.transform.localPosition = p2v3;
+                _player2.transform.localPosition = p2v3;
             }
         }
         catch (Exception exp)

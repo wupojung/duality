@@ -11,5 +11,5 @@ public static class GameMgr
 
     public static AudioMgr Audio;
 
-    public static bool IsDebug = false;
+    public static bool IsDebug = true;
 }
