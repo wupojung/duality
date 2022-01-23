@@ -17,7 +17,7 @@ public class PlayerHandler : MonoBehaviour
     private BlockItem _blockType;
     private BlockItem _predictBlock;
     private bool _isCombe = false;
-    
+
     // timer
     private Timer _boosterCoolDownTimer;
     private float _boosterCoolDownInterval = 2000; // 2 second 
@@ -25,29 +25,28 @@ public class PlayerHandler : MonoBehaviour
     private bool _isTransformationBusy = false;
     private Timer _transformationCoolDownTimer;
     private float _transformationCoolDownInterval = 200;
-    
+
     #region Unity core event
 
-    
     void Start()
     {
         _avatarType = AvatarType.Black;
         _avatarStatus = AvatarStatus.Idle;
 
         _rigidbody2D = GetComponent<Rigidbody2D>();
-        _animator = GetComponent<Animator>();
+        _animator = GetComponentInChildren<Animator>();
 
         _boosterCoolDownTimer = new System.Timers.Timer {Interval = _boosterCoolDownInterval};
         _boosterCoolDownTimer.Elapsed += new System.Timers.ElapsedEventHandler(_TimersTimer_Elapsed);
         _boosterCoolDownTimer.Start();
-        
-        
+
+
         _transformationCoolDownTimer = new System.Timers.Timer {Interval = _transformationCoolDownInterval};
         _transformationCoolDownTimer.AutoReset = false;
-        _transformationCoolDownTimer.Elapsed += new System.Timers.ElapsedEventHandler(TransformationCoolDownTimer_Elapsed);
+        _transformationCoolDownTimer.Elapsed +=
+            new System.Timers.ElapsedEventHandler(TransformationCoolDownTimer_Elapsed);
         _transformationCoolDownTimer.Start();
     }
-
 
 
     void Update()
@@ -71,6 +70,7 @@ public class PlayerHandler : MonoBehaviour
         {
             return;
         }
+
         GUIStyle style = new GUIStyle();
         style.fontSize = 30;
         style.normal.textColor = Color.white;
@@ -165,12 +165,12 @@ public class PlayerHandler : MonoBehaviour
         _horizontalSpeed = speed;
     }
 
-    public void SetBoosterCoolDownTime(float speed=2000)
+    public void SetBoosterCoolDownTime(float speed = 2000)
     {
         this._boosterCoolDownInterval = 2000;
     }
-    
-    public void SetTransformationCoolDownTime(float interval=2000)
+
+    public void SetTransformationCoolDownTime(float interval = 2000)
     {
         _transformationCoolDownInterval = interval;
     }
@@ -190,7 +190,7 @@ public class PlayerHandler : MonoBehaviour
             Debug.LogWarning("Avatar is BUSY !!!");
             return;
         }
-        
+
         switch (_avatarType)
         {
             case AvatarType.Black:
@@ -209,7 +209,7 @@ public class PlayerHandler : MonoBehaviour
         _isTransformationBusy = true;
         _transformationCoolDownTimer.Interval = _transformationCoolDownInterval;
         _transformationCoolDownTimer.Start();
-        
+
         //切換顏色時進行預判 （combo)
         //_predictBlock
         //目前跟 預知一樣 表示 combo
@@ -293,6 +293,7 @@ public class PlayerHandler : MonoBehaviour
     {
         _isCombe = false;
     }
+
     void TransformationCoolDownTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
         _isTransformationBusy = false;

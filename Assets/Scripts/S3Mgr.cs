@@ -113,7 +113,7 @@ public class S3Mgr : MonoBehaviour
         {
             _openAnimator.gameObject.SetActive(false);
             GameMgr.IsGameStart = true;
-            _preSecondTimer.Start(); //遊戲開始計時
+            _preSecondTimer?.Start(); //遊戲開始計時
         }
 
         if (GameMgr.IsGameStart)
@@ -179,6 +179,9 @@ public class S3Mgr : MonoBehaviour
     private void ResetForGameStart()
     {
         GameMgr.ResetGame();
+        
+        //for all panel 
+        _uiPanel.SetActive(true);
         _gameOverPanel.SetActive(false);
         _hurryUpAnimator.gameObject.SetActive(false);
 
@@ -344,13 +347,13 @@ public class S3Mgr : MonoBehaviour
             {
                 if (_particleSystemCameraPanel.transform.GetChild(i).name.Contains("Player1"))
                 {
-                    _particleForPlayer1 = _particleSystemCameraPanel.transform.GetChild(i).GetChild(0)
+                    _particleForPlayer1 = _particleSystemCameraPanel.transform.GetChild(i).GetChild(1)
                         .GetComponent<ParticleSystem>();
                 }
 
                 if (_particleSystemCameraPanel.transform.GetChild(i).name.Contains("Player2"))
                 {
-                    _particleForPlayer2 = _particleSystemCameraPanel.transform.GetChild(i).GetChild(0)
+                    _particleForPlayer2 = _particleSystemCameraPanel.transform.GetChild(i).GetChild(1)
                         .GetComponent<ParticleSystem>();
                 }
             }

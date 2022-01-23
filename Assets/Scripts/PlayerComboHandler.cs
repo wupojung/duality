@@ -24,7 +24,7 @@ public class PlayerComboHandler : MonoBehaviour
             BlockItem block = other.GetComponent<BlockItem>();
             //Debug.Log(other.name+"-->"+block.currentType.ToString());
             
-            PlayerHandler handler = transform.parent.GetComponent<PlayerHandler>();
+            PlayerHandler handler = transform.parent.parent.GetComponent<PlayerHandler>();
             handler.SetPredictBlock(block);  //向上傳輸
         }
         catch (Exception exp)
