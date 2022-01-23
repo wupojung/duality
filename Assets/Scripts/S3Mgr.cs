@@ -77,7 +77,7 @@ public class S3Mgr : MonoBehaviour
         ScanUI();
         ScanParticleSystemCameraPanel();
 
-
+        
         //setup parms
         _player1.SetHorizontalSpeed(horizontalSpeed);
         _player2.SetHorizontalSpeed(horizontalSpeed);
