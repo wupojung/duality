@@ -140,7 +140,7 @@ GameObject:
   - component: {fileID: 23329742}
   - component: {fileID: 23329741}
   m_Layer: 0
-  m_Name: Star_shadow (2)
+  m_Name: StarShadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -793,7 +793,7 @@ GameObject:
   - component: {fileID: 240854750}
   - component: {fileID: 240854749}
   m_Layer: 0
-  m_Name: Star_shadow (1)
+  m_Name: StarShadow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
