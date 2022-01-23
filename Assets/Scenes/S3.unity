@@ -3073,6 +3073,7 @@ MonoBehaviour:
   GameOverPanel: {fileID: 1252182538}
   openAnimator: {fileID: 525378387}
   winnerAnimator: {fileID: 1139596461}
+  btnContinue: {fileID: 1997288381}
   ParticleSystemCameraPanel: {fileID: 655390226}
 --- !u!4 &768915559
 Transform:
