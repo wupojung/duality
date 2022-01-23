@@ -14,7 +14,7 @@ public class S1Mgr : MonoBehaviour
     void Start()
     {
         StartCoroutine(ChangeColor());
-        GameObject.Find("StartGame").GetComponentInChildren<Text>().text = "";
+
     }
 
     IEnumerator ChangeColor()
