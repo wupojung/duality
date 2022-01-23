@@ -7,48 +7,58 @@ using Random = UnityEngine.Random;
 
 public class S3Mgr : MonoBehaviour
 {
-    private PlayerHandler _player1;
-    private PlayerHandler _player2;
+  
+    #region Config
+    
+    [Header("地圖速度(垂直)")] 
+    public float verticalSpeed = 2000.0f;
 
-    private float _distance = 0.0f;
-    public float comboSpeed = 20.0f;
-    private GameObject _markObj;
-
+    [Header("左右移動速度(水平)")] 
     public float horizontalSpeed = 40000.0f;
 
-    //core panel
+    [Header("加速速度")] 
+    public float boosterSpeed = 0.1f;
+    #endregion
+  
+    #region Variables Area
+
+    // -- core panel
     private GameObject _bgPanel;
     private GameObject _fgPanel;
     private GameObject _uiPanel;
+    
+    // -- Gameplay
+    private GameObject _gameOverPanel;
+    private GameObject _winPanel;
+    private Button _btnContinue;  //繼續按鈕
 
-
-    //移動面板(底板，block)
-    public float verticalSpeed = 2000.0f;
+    // -- 玩家相關
+    private PlayerHandler _player1;
+    private PlayerHandler _player2;
+    
+    // -- 模擬跑步差距
+    private GameObject _centerLineObj;  //中心線物件(拿來計算用）
+    private float _distance = 0.0f;
+    
+    // -- 地圖模組
     private GameObject _scrollPanel;
     private IList<GameObject> _scrollPanelList; //子物件
     private int _scrollPanelIndex = 0; // 索引
-
-
-    //碰撞牆面
-    private GameObject _wallPanel;
-
-    // game logic
-    private GameObject _gameOverPanel;
-    private GameObject _winPanel;
-
+    private GameObject _wallPanel;  // 牆面
+    
+    // -- 動畫模組
     private Animator _openAnimator;
     private Animator _winnerAnimator;
-
-    private Button _btnContinue;
-
-
-    //粒子特效用
+    
+    // -- 粒子特效用
     private GameObject _particleSystemCameraPanel;
     private ParticleSystem _particleForPlayer1;
     private ParticleSystem _particleForPlayer2;
 
-
-    #region Unity core event
+    
+    #endregion
+    
+    #region Unity Core Event
 
     private void Awake()
     {
@@ -59,7 +69,7 @@ public class S3Mgr : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
         ScanRequirementGameObject();
 
@@ -68,19 +78,14 @@ public class S3Mgr : MonoBehaviour
         ScanParticleSystemCameraPanel();
 
 
-
-
         //setup parms
         _player1.SetHorizontalSpeed(horizontalSpeed);
         _player2.SetHorizontalSpeed(horizontalSpeed);
 
-
-        _gameOverPanel.SetActive(false);
-
-        _btnContinue.onClick.AddListener(OnBtnContinueClick);
+        ResetForGameStart();
     }
 
-    void Update()
+    private void Update()
     {
         //確認動畫播放完畢
         if (!GameMgr.IsGameStart && _openAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
@@ -130,6 +135,13 @@ public class S3Mgr : MonoBehaviour
 
     #region Support function（private）
 
+    private void ResetForGameStart()
+    {
+        GameMgr.IsGameOver = false;
+        GameMgr.IsGameStart = false;
+        _gameOverPanel.SetActive(false);
+    }
+
     #region Scan
 
     private void ScanRequirementGameObject()
@@ -158,14 +170,14 @@ public class S3Mgr : MonoBehaviour
 
         //-- OperationArea/Player
         GameObject playerPanel = ScanHelper.ScanGameObjectByName(OperationArea, "Player");
-     GameObject   p1 = ScanHelper.ScanGameObjectByName(playerPanel, "P1");
-     GameObject   p2 = ScanHelper.ScanGameObjectByName(playerPanel, "P2");
-        
+        GameObject p1 = ScanHelper.ScanGameObjectByName(playerPanel, "P1");
+        GameObject p2 = ScanHelper.ScanGameObjectByName(playerPanel, "P2");
+
         _player1 = p1.GetComponent<PlayerHandler>();
         _player2 = p2.GetComponent<PlayerHandler>();
-        
-        _markObj = ScanHelper.ScanGameObjectByName(playerPanel, "Mark");
-        
+
+        _centerLineObj = ScanHelper.ScanGameObjectByName(playerPanel, "Mark");
+
 
         //-- OperationArea/WallPanel
         _wallPanel = ScanHelper.ScanGameObjectByName(OperationArea, "WallPanel");
@@ -249,13 +261,13 @@ public class S3Mgr : MonoBehaviour
     {
         _winPanel = ScanHelper.ScanGameObjectByName(_gameOverPanel, "WinPanel");
         _winnerAnimator = _winPanel.GetComponent<Animator>();
-        
+
         GameObject continueObj = ScanHelper.ScanGameObjectByName(_gameOverPanel, "btnContinue");
         if (continueObj != null)
         {
             _btnContinue = continueObj.GetComponent<Button>();
+            _btnContinue.onClick.AddListener(OnBtnContinueClick);
         }
-        
     }
 
     #endregion
@@ -500,31 +512,31 @@ public class S3Mgr : MonoBehaviour
             // 顯示
             if (_distance == 0)
             {
-                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
+                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
                 _player1.transform.localPosition = p1v3;
 
-                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
+                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
                 _player2.transform.localPosition = p2v3;
             }
 
             if (_distance > 0)
             {
-                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
+                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
                 p1v3.y += Math.Abs(_distance / 2);
                 _player1.transform.localPosition = p1v3;
 
-                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
+                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
                 p2v3.y -= Math.Abs(_distance / 2);
                 _player2.transform.localPosition = p2v3;
             }
 
             if (_distance < 0)
             {
-                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
+                Vector3 p1v3 = new Vector3(_player1.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
                 p1v3.y -= Math.Abs(_distance / 2);
                 _player1.transform.localPosition = p1v3;
 
-                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _markObj.transform.localPosition.y, 0);
+                Vector3 p2v3 = new Vector3(_player2.transform.localPosition.x, _centerLineObj.transform.localPosition.y, 0);
                 p2v3.y += Math.Abs(_distance / 2);
                 _player2.transform.localPosition = p2v3;
             }
@@ -549,14 +561,14 @@ public class S3Mgr : MonoBehaviour
             {
                 GameMgr.Audio.PlaySpeedUp();
                 _player1.PlayBooster();
-                _distance -= comboSpeed;
+                _distance -= boosterSpeed;
             }
 
             if (_player2.IsCombe)
             {
                 GameMgr.Audio.PlaySpeedUp();
                 _player2.PlayBooster();
-                _distance += comboSpeed;
+                _distance += boosterSpeed;
             }
         }
         catch (Exception exp)
@@ -567,11 +579,20 @@ public class S3Mgr : MonoBehaviour
         }
     }
 
+    #endregion
+
+    #region Events 
+
+    /// <summary>
+    /// 計算按鈕
+    /// </summary>
     private void OnBtnContinueClick()
     {
         GameMgr.Audio.PlayClick();
         SceneManager.LoadScene("S2");
     }
+
+    
 
     #endregion
 }

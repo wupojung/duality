@@ -5,11 +5,14 @@ using UnityEngine;
 
 public static class GameMgr
 {
+    //config
     public static bool IsBgmReady = false;
-    public static bool IsGameStart;
-    public static bool IsGameOver;
+    public static bool IsGameStart = false;
+    public static bool IsGameOver = false;
 
+    //cache
     public static AudioMgr Audio;
 
-    public static bool IsDebug = true;
+    //debug mode 
+    public static bool IsDebug = false;
 }
