@@ -58,6 +58,8 @@ public class S3Mgr : MonoBehaviour
     private Animator _winnerAnimator;
     private Animator _hurryUpAnimator;
 
+    private Animator _timesUpAnimator;
+
     // -- 粒子特效用
     private GameObject _particleSystemCameraPanel;
     private ParticleSystem _particleForPlayer1;
@@ -102,6 +104,8 @@ public class S3Mgr : MonoBehaviour
 
         if (_duration > gameTimer)
         {
+            _timesUpAnimator.gameObject.SetActive(true);
+     
             GameMgr.IsTimesUp = true;
         }
     }
@@ -114,6 +118,11 @@ public class S3Mgr : MonoBehaviour
             _openAnimator.gameObject.SetActive(false);
             GameMgr.IsGameStart = true;
             _preSecondTimer?.Start(); //遊戲開始計時
+        }
+        
+        if (GameMgr.IsTimesUp && _timesUpAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
+        {
+            GameMgr.IsGameOver = true;
         }
 
         if (GameMgr.IsGameStart)
@@ -132,12 +141,7 @@ public class S3Mgr : MonoBehaviour
             _gameOverPanel.SetActive(true);
         }
 
-        if (GameMgr.IsTimesUp)
-        {
-            //TODO:播放時間到動畫
-
-            GameMgr.IsGameOver = true;
-        }
+      
     }
 
     private void OnGUI()
@@ -238,7 +242,15 @@ public class S3Mgr : MonoBehaviour
         {
             _hurryUpAnimator = alertPanel.GetComponent<Animator>();
         }
-
+        alertPanel.SetActive(false);
+        
+        GameObject TimeUpPanel = _wallPanel = ScanHelper.ScanGameObjectByName(OperationArea, "TimeUpPanel");
+        if (alertPanel != null)
+        {
+            _timesUpAnimator = alertPanel.GetComponent<Animator>();
+        }
+        TimeUpPanel.SetActive(false);
+        
         //
         //-- L
         //-- R
