@@ -105,7 +105,7 @@ public class S3Mgr : MonoBehaviour
         if (_duration > gameTimer)
         {
             _timesUpAnimator.gameObject.SetActive(true);
-     
+
             GameMgr.IsTimesUp = true;
         }
     }
@@ -119,7 +119,7 @@ public class S3Mgr : MonoBehaviour
             GameMgr.IsGameStart = true;
             _preSecondTimer?.Start(); //遊戲開始計時
         }
-        
+
         if (GameMgr.IsTimesUp && _timesUpAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > 1)
         {
             GameMgr.IsGameOver = true;
@@ -140,8 +140,6 @@ public class S3Mgr : MonoBehaviour
             _winPanel.SetActive(true);
             _gameOverPanel.SetActive(true);
         }
-
-      
     }
 
     private void OnGUI()
@@ -174,22 +172,23 @@ public class S3Mgr : MonoBehaviour
         _player1.SetHorizontalSpeed(horizontalSpeed);
         _player1.SetBoosterCoolDownTime(boosterInterval);
         _player1.SetTransformationCoolDownTime(transformationInterval);
-        _player1.SetDayColor(new Color32(124, 164, 81,255));
-        _player1.SetNightColor(new Color32(61, 95, 135,255));
+        _player1.SetDayColor(new Color32(124, 164, 81, 255));
+        _player1.SetNightColor(new Color32(61, 95, 135, 255));
+        _player1.SetupDefaultType();
 
-        
+
         _player2.SetHorizontalSpeed(horizontalSpeed);
         _player2.SetBoosterCoolDownTime(boosterInterval);
         _player2.SetTransformationCoolDownTime(transformationInterval);
-        _player2.SetDayColor(new Color32(124, 164, 81,255));
-        _player2.SetNightColor(new Color32(61, 95, 135,255));
-
+        _player2.SetDayColor(new Color32(124, 164, 81, 255));
+        _player2.SetNightColor(new Color32(61, 95, 135, 255));
+        _player2.SetupDefaultType();
     }
 
     private void ResetForGameStart()
     {
         GameMgr.ResetGame();
-        
+
         //for all panel 
         _uiPanel.SetActive(true);
         _gameOverPanel.SetActive(false);
@@ -248,15 +247,17 @@ public class S3Mgr : MonoBehaviour
         {
             _hurryUpAnimator = alertPanel.GetComponent<Animator>();
         }
+
         alertPanel.SetActive(false);
-        
+
         GameObject TimeUpPanel = _wallPanel = ScanHelper.ScanGameObjectByName(OperationArea, "TimeUpPanel");
         if (alertPanel != null)
         {
             _timesUpAnimator = alertPanel.GetComponent<Animator>();
         }
+
         TimeUpPanel.SetActive(false);
-        
+
         //
         //-- L
         //-- R

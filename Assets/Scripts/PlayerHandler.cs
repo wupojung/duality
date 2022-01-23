@@ -201,6 +201,13 @@ public class PlayerHandler : MonoBehaviour
         _avatarStatus = status;
     }
 
+    public void SetupDefaultType()
+    {
+        _avatarType = AvatarType.White;
+        _starShadow.color = dayColor;
+        _animator.SetBool("ChangeColorToBlack", false);
+    }
+    
     /// <summary>
     /// transformation 變身
     /// </summary>
