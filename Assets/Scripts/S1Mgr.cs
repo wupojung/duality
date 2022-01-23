@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class S1Mgr : MonoBehaviour
 {
@@ -13,6 +14,7 @@ public class S1Mgr : MonoBehaviour
     void Start()
     {
         StartCoroutine(ChangeColor());
+
     }
 
     IEnumerator ChangeColor()
@@ -45,5 +47,37 @@ public class S1Mgr : MonoBehaviour
             Debug.Log("press enter !! ");
             SceneManager.LoadScene("S2");
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+
+            Debug.Log("press ESC !! ");
+            //Application.Quit();
+            Quit();
+        }
+
+
+
+    }
+
+    public void Quit()
+    {
+        #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+        #else
+           Application.Quit();
+        #endif
+    }
+    public void GotoS2()
+    {
+        GameMgr.Audio.PlayClick();
+        Debug.Log("press enter !! ");
+        SceneManager.LoadScene("S2");
+    }
+    public void GotoS3()
+    {
+        GameMgr.Audio.PlayClick();
+        Debug.Log("press enter !! ");
+        SceneManager.LoadScene("S3");
     }
 }
