@@ -139,7 +139,12 @@ public class S3Mgr : MonoBehaviour
             _winnerAnimator.SetBool("p2win", CheckIsP2Win());
             _winPanel.SetActive(true);
             _gameOverPanel.SetActive(true);
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                SceneManager.LoadScene("S2");
+            }
         }
+
     }
 
     private void OnGUI()
@@ -172,16 +177,16 @@ public class S3Mgr : MonoBehaviour
         _player1.SetHorizontalSpeed(horizontalSpeed);
         _player1.SetBoosterCoolDownTime(boosterInterval);
         _player1.SetTransformationCoolDownTime(transformationInterval);
-        _player1.SetDayColor(new Color32(124, 164, 81, 255));
-        _player1.SetNightColor(new Color32(61, 95, 135, 255));
+        _player1.SetNightColor(new Color32(124, 164, 81, 255));
+        _player1.SetDayColor(new Color32(61, 95, 135, 255));
         _player1.SetupDefaultType();
 
 
         _player2.SetHorizontalSpeed(horizontalSpeed);
         _player2.SetBoosterCoolDownTime(boosterInterval);
         _player2.SetTransformationCoolDownTime(transformationInterval);
-        _player2.SetDayColor(new Color32(124, 164, 81, 255));
-        _player2.SetNightColor(new Color32(61, 95, 135, 255));
+        _player2.SetNightColor(new Color32(124, 164, 81, 255));
+        _player2.SetDayColor(new Color32(61, 95, 135, 255));
         _player2.SetupDefaultType();
     }
 
@@ -195,7 +200,7 @@ public class S3Mgr : MonoBehaviour
         _hurryUpAnimator.gameObject.SetActive(false);
 
         //啟動timer
-        _preSecondTimer = new System.Timers.Timer {Interval = 1000}; //固定1秒
+        _preSecondTimer = new System.Timers.Timer { Interval = 1000 }; //固定1秒
         _preSecondTimer.AutoReset = true;
         _preSecondTimer.Elapsed += new System.Timers.ElapsedEventHandler(GameTimer_Elapsed);
         // _gameTimer.Start();
@@ -483,7 +488,7 @@ public class S3Mgr : MonoBehaviour
 
             //動態計算便宜的
             float offsetY = panel.GetComponent<GridLayoutGroup>().cellSize.y
-                            * (float) panel.transform.childCount
+                            * (float)panel.transform.childCount
                             / 2.0f;
 
 
@@ -643,14 +648,14 @@ public class S3Mgr : MonoBehaviour
             {
                 GameMgr.Audio.PlaySpeedUp();
                 _player1.PlayBooster();
-                _distance -= boosterSpeed;
+                // _distance -= boosterSpeed;
             }
 
             if (_player2.IsCombe)
             {
                 GameMgr.Audio.PlaySpeedUp();
                 _player2.PlayBooster();
-                _distance += boosterSpeed;
+                // _distance += boosterSpeed;
             }
         }
         catch (Exception exp)
