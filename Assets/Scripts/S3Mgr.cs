@@ -174,10 +174,16 @@ public class S3Mgr : MonoBehaviour
         _player1.SetHorizontalSpeed(horizontalSpeed);
         _player1.SetBoosterCoolDownTime(boosterInterval);
         _player1.SetTransformationCoolDownTime(transformationInterval);
+        _player1.SetDayColor(new Color32(124, 164, 81,255));
+        _player1.SetNightColor(new Color32(61, 95, 135,255));
 
+        
         _player2.SetHorizontalSpeed(horizontalSpeed);
         _player2.SetBoosterCoolDownTime(boosterInterval);
         _player2.SetTransformationCoolDownTime(transformationInterval);
+        _player2.SetDayColor(new Color32(124, 164, 81,255));
+        _player2.SetNightColor(new Color32(61, 95, 135,255));
+
     }
 
     private void ResetForGameStart()

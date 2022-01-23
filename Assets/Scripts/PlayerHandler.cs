@@ -1,6 +1,7 @@
 using System;
 using System.Timers;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerHandler : MonoBehaviour
 {
@@ -26,8 +27,20 @@ public class PlayerHandler : MonoBehaviour
     private Timer _transformationCoolDownTimer;
     private float _transformationCoolDownInterval = 200;
 
+
+    private Image _starShadow;
+    private Color dayColor;
+    private Color nightColor;
     #region Unity core event
 
+    public void SetDayColor(Color color)
+    {
+        dayColor = color;
+    }
+    public void SetNightColor(Color color)
+    {
+        nightColor = color;
+    }
     void Start()
     {
         _avatarType = AvatarType.Black;
@@ -35,6 +48,14 @@ public class PlayerHandler : MonoBehaviour
 
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _animator = GetComponentInChildren<Animator>();
+
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i).name == "StarShadow")
+            {
+                _starShadow = transform.GetChild(i).GetComponent<Image>();
+            }
+        }
 
         _boosterCoolDownTimer = new System.Timers.Timer {Interval = _boosterCoolDownInterval};
         _boosterCoolDownTimer.Elapsed += new System.Timers.ElapsedEventHandler(_TimersTimer_Elapsed);
@@ -195,11 +216,13 @@ public class PlayerHandler : MonoBehaviour
         {
             case AvatarType.Black:
                 _avatarType = AvatarType.White;
+                _starShadow.color = dayColor;
                 _animator.SetBool("ChangeColorToBlack", false);
                 // animator.runtimeAnimatorController = dayController;
                 break;
             case AvatarType.White:
                 _avatarType = AvatarType.Black;
+                _starShadow.color = nightColor;
                 _animator.SetBool("ChangeColorToBlack", true);
                 // animator.runtimeAnimatorController = nightController;
                 break;
