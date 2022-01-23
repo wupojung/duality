@@ -16,8 +16,15 @@ public class S3Mgr : MonoBehaviour
     [Header("左右移動速度(水平)")] 
     public float horizontalSpeed = 40000.0f;
 
+    
+    [Header("變身CD時間")] 
+    public float transformationInterval = 200.0f;
+    
     [Header("加速速度")] 
     public float boosterSpeed = 0.1f;
+    
+    [Header("加速持續時間")] 
+    public float boosterInterval = 2000.0f;
     #endregion
   
     #region Variables Area
@@ -77,12 +84,8 @@ public class S3Mgr : MonoBehaviour
         ScanUI();
         ScanParticleSystemCameraPanel();
 
-        
-        //setup parms
-        _player1.SetHorizontalSpeed(horizontalSpeed);
-        _player2.SetHorizontalSpeed(horizontalSpeed);
-
-        ResetForGameStart();
+        ResetConfig(); //設定參數
+        ResetForGameStart();  //重設遊戲
     }
 
     private void Update()
@@ -135,6 +138,18 @@ public class S3Mgr : MonoBehaviour
 
     #region Support function（private）
 
+    private void ResetConfig()
+    {
+        _player1.SetHorizontalSpeed(horizontalSpeed);
+        _player1.SetBoosterCoolDownTime(boosterInterval);
+        _player1.SetTransformationCoolDownTime(transformationInterval);
+        
+        _player2.SetHorizontalSpeed(horizontalSpeed);
+        _player2.SetBoosterCoolDownTime(boosterInterval);
+        _player2.SetTransformationCoolDownTime(transformationInterval);
+
+    }
+    
     private void ResetForGameStart()
     {
         GameMgr.IsGameOver = false;

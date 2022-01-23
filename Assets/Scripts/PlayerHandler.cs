@@ -17,9 +17,15 @@ public class PlayerHandler : MonoBehaviour
     private BlockItem _blockType;
     private BlockItem _predictBlock;
     private bool _isCombe = false;
-    private Timer _comboCountDownTimer;
-    private int _interval = 2000; // 2 second 
+    
+    // timer
+    private Timer _boosterCoolDownTimer;
+    private float _boosterCoolDownInterval = 2000; // 2 second 
 
+    private bool _isTransformationBusy = false;
+    private Timer _transformationCoolDownTimer;
+    private float _transformationCoolDownInterval = 200;
+    
     #region Unity core event
 
     
@@ -31,9 +37,15 @@ public class PlayerHandler : MonoBehaviour
         _rigidbody2D = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
 
-        _comboCountDownTimer = new System.Timers.Timer {Interval = _interval};
-        _comboCountDownTimer.Elapsed += new System.Timers.ElapsedEventHandler(_TimersTimer_Elapsed);
-        _comboCountDownTimer.Start();
+        _boosterCoolDownTimer = new System.Timers.Timer {Interval = _boosterCoolDownInterval};
+        _boosterCoolDownTimer.Elapsed += new System.Timers.ElapsedEventHandler(_TimersTimer_Elapsed);
+        _boosterCoolDownTimer.Start();
+        
+        
+        _transformationCoolDownTimer = new System.Timers.Timer {Interval = _transformationCoolDownInterval};
+        _transformationCoolDownTimer.AutoReset = false;
+        _transformationCoolDownTimer.Elapsed += new System.Timers.ElapsedEventHandler(TransformationCoolDownTimer_Elapsed);
+        _transformationCoolDownTimer.Start();
     }
 
 
@@ -153,13 +165,32 @@ public class PlayerHandler : MonoBehaviour
         _horizontalSpeed = speed;
     }
 
+    public void SetBoosterCoolDownTime(float speed=2000)
+    {
+        this._boosterCoolDownInterval = 2000;
+    }
+    
+    public void SetTransformationCoolDownTime(float interval=2000)
+    {
+        _transformationCoolDownInterval = interval;
+    }
+
     public void ChangeStatus(AvatarStatus status)
     {
         _avatarStatus = status;
     }
 
+    /// <summary>
+    /// transformation 變身
+    /// </summary>
     public void ChangeAvatarType()
     {
+        if (_isTransformationBusy)
+        {
+            Debug.LogWarning("Avatar is BUSY !!!");
+            return;
+        }
+        
         switch (_avatarType)
         {
             case AvatarType.Black:
@@ -174,6 +205,11 @@ public class PlayerHandler : MonoBehaviour
                 break;
         }
 
+        //啟動變身CD
+        _isTransformationBusy = true;
+        _transformationCoolDownTimer.Interval = _transformationCoolDownInterval;
+        _transformationCoolDownTimer.Start();
+        
         //切換顏色時進行預判 （combo)
         //_predictBlock
         //目前跟 預知一樣 表示 combo
@@ -185,8 +221,8 @@ public class PlayerHandler : MonoBehaviour
                 Debug.Log("Combo!!");
                 _isCombe = true;
                 //啟動計時器 關閉
-                _comboCountDownTimer.Interval = _interval;
-                _comboCountDownTimer.Start();
+                _boosterCoolDownTimer.Interval = _boosterCoolDownInterval;
+                _boosterCoolDownTimer.Start();
             }
         }
 
@@ -256,6 +292,10 @@ public class PlayerHandler : MonoBehaviour
     void _TimersTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
     {
         _isCombe = false;
+    }
+    void TransformationCoolDownTimer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
+    {
+        _isTransformationBusy = false;
     }
 
     #endregion
